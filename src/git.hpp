@@ -11,7 +11,6 @@ namespace git {
 		std::string get_head_commit() const;
 
 	private:
-		std::string _name;
 		git_repository *_repository;
 	};
 }

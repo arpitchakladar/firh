@@ -18,7 +18,9 @@ namespace filesystem {
 
 	std::fstream open_file(const std::string& path) {
 		std::fstream file_stream;
-		file_stream.open(path, std::ios_base::out);
+		file_stream.open(path, std::ios::out);
+		file_stream.close();
+		file_stream.open(path, std::ios::in | std::ios::out);
 		return file_stream;
 	}
 }
