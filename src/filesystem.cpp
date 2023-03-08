@@ -23,4 +23,10 @@ namespace filesystem {
 		file_stream.open(path, std::ios::in | std::ios::out);
 		return file_stream;
 	}
+
+	void create_file(const std::string& path) {
+		std::fstream file_stream;
+		file_stream.open(path, std::ios::in);
+		file_stream.close();
+	}
 }

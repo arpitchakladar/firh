@@ -6,10 +6,10 @@
 #include "filesystem.hpp"
 
 namespace git {
-	Repository::Repository(std::string&& name, const std::string& remote_url) {
-		std::string local_path = "/tmp/firh/repositories/" + name;
-		filesystem::remove_directory(local_path);
-		git_clone(&_repository, remote_url.c_str(), local_path.c_str(), NULL);
+	Repository::Repository(const std::string& name, const std::string& remote_url) {
+		_local_path = "/tmp/firh/repositories/" + name;
+		filesystem::remove_directory(_local_path);
+		git_clone(&_repository, remote_url.c_str(), _local_path.c_str(), NULL);
 	}
 
 	std::string Repository::get_head_commit() const {

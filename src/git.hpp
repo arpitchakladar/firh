@@ -7,10 +7,14 @@
 namespace git {
 	class Repository {
 	public:
-		Repository(std::string&& name, const std::string& remote_url);
+		Repository(const std::string& name, const std::string& remote_url);
 		std::string get_head_commit() const;
 
+	public:
+		const std::string& get_local_path() const { return _local_path; }
+
 	private:
-		git_repository *_repository;
+		git_repository* _repository;
+		std::string _local_path;
 	};
 }

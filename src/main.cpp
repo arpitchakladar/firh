@@ -12,6 +12,7 @@
 #include "filesystem.hpp"
 #include "git.hpp"
 #include "package_control.hpp"
+#include "package_configuration.hpp"
 
 int main(int argc, char* argv[]) {
 	git_libgit2_init();
@@ -28,7 +29,6 @@ int main(int argc, char* argv[]) {
 		.commit = last_commit
 	};
 	firh_package_list_file << firh_package_list << std::endl;
-	//std::string build_command = "cd " + local_path + "&& make config=release";
-	//system(build_command.c_str());
+	std::cout << YAML::Node(package_configuration::get_package_configuration()) << std::endl;
 	return EXIT_SUCCESS;
 }
