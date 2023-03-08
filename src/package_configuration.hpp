@@ -2,6 +2,8 @@
 #include <vector>
 #include <unordered_map>
 
+#include "yaml-cpp/yaml.h"
+
 #pragma once
 
 namespace package_configuration {
@@ -17,7 +19,6 @@ namespace package_configuration {
 
 	std::unordered_map<std::string, PackageConfigurationInformation> get_package_configuration();
 }
-
 
 namespace YAML {
 	template<>
