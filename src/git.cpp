@@ -5,8 +5,10 @@
 #include "git.hpp"
 #include "filesystem.hpp"
 
+static std::string _get_repository_cache_directory = "/tmp/firh/repositories/";
+
 GitRepository::GitRepository(const std::string& name, const std::string& remote_url) {
-	_local_path = "/tmp/firh/repositories/" + name;
+	_local_path = _get_repository_cache_directory + name;
 	remove_directory(_local_path);
 	git_clone(&_repository, remote_url.c_str(), _local_path.c_str(), NULL);
 }

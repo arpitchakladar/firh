@@ -4,20 +4,20 @@
 
 #pragma once
 
-struct PackageControl {
+struct PackageInformation {
 	std::string commit;
 };
 
 namespace YAML {
 	template<>
-	struct convert<PackageControl> {
-		static Node encode(const PackageControl& rhs) {
+	struct convert<PackageInformation> {
+		static Node encode(const PackageInformation& rhs) {
 			Node node;
 			node["commit"] = rhs.commit;
 			return node;
 		}
 
-		static bool decode(const Node& node, PackageControl& rhs) {
+		static bool decode(const Node& node, PackageInformation& rhs) {
 			if (!node.IsMap()) {
 				return false;
 			}

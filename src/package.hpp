@@ -24,4 +24,4 @@ private:
 	bool _built;
 };
 
-void create(const std::string& name, std::unordered_map<std::string, Package*>& packages, const std::unordered_map<std::string, PackageConfiguration>& package_configurations);
+void add_package(const std::string& name, std::unordered_map<std::string, Package*>& packages, const std::unordered_map<std::string, PackageConfiguration>& package_configurations);

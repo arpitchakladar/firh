@@ -1,18 +1,18 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
-#include <iostream>
 
 #include "yaml-cpp/yaml.h"
 
 #include "package_configuration.hpp"
 #include "filesystem.hpp"
 
-std::unordered_map<std::string, PackageConfiguration> get_package_configuration() {
-	std::string firh_packages_path = "./tests/packages.yml";
-	create_file(firh_packages_path);
+static std::string _packages_path = "./tests/packages.yml";
+
+std::unordered_map<std::string, PackageConfiguration> get_package_configurations() {
 	std::unordered_map<std::string, PackageConfiguration> package_configuration;
-	YAML::Node firh_packages = YAML::LoadFile(firh_packages_path);
+	create_file(_packages_path);
+	YAML::Node firh_packages = YAML::LoadFile(_packages_path);
 	for (YAML::const_iterator it = firh_packages.begin(); it != firh_packages.end(); it++) {
 		package_configuration[it->first.as<std::string>()] = it->second.as<PackageConfiguration>();
 	}

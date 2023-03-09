@@ -11,24 +11,24 @@
 
 #include "filesystem.hpp"
 #include "git.hpp"
-#include "package_control.hpp"
+#include "package_information.hpp"
 #include "package_configuration.hpp"
+
+static std::string _data_folder = std::string(std::getenv("HOME")) + "/.local/share/firh/";
+static std::string _package_list_path = _data_folder + "package-control.yml";
 
 int main(int argc, char* argv[]) {
 	git_libgit2_init();
-	std::string firh_data_folder = std::string(std::getenv("HOME")) + "/.local/share/firh";
-	mkdir(firh_data_folder.c_str(), 0777);
+	create_directory(_data_folder);
 	GitRepository repository("bazl", "https://github.com/arpitchakladar/bazl");
 	std::string last_commit = repository.get_head_commit();
 	std::cout << "Last commit = " << last_commit << std::endl;
-	std::string firh_package_list_path = firh_data_folder + "/package-control.yml";
-	std::fstream firh_package_list_file = open_file(firh_package_list_path);
-	YAML::Node firh_package_list = YAML::LoadFile(firh_package_list_path);
+	std::fstream package_list_file = open_file(_package_list_path);
+	YAML::Node package_list = YAML::LoadFile(_package_list_path);
 	YAML::Node current_package_control;
-	firh_package_list["bazl"] = PackageControl {
+	package_list["bazl"] = PackageInformation {
 		.commit = last_commit
 	};
-	firh_package_list_file << firh_package_list << std::endl;
-	std::cout << YAML::Node(get_package_configuration()) << std::endl;
+	package_list_file << package_list << std::endl;
 	return EXIT_SUCCESS;
 }

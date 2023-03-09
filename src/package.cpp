@@ -25,19 +25,19 @@ void Package::build() {
 	}
 }
 
-void create(const std::string& name, std::unordered_map<std::string, Package>& packages, const std::unordered_map<std::string, PackageConfiguration>& package_configurations) {
+void add_package(const std::string& name, std::unordered_map<std::string, Package>& packages, const std::unordered_map<std::string, PackageConfiguration>& package_configurations) {
 	if (packages.find(name) == packages.end()) {
 		const PackageConfiguration& package_configuration = package_configurations.at(name);
 		std::vector<Package*> dependencies;
 		for (const std::string& dependency_name : package_configuration.dependencies) {
-				create(dependency_name, packages, package_configurations);
-				dependencies.push_back(&packages.at(dependency_name));
-			}
-			std::vector<Package*> build_dependencies;
-			for (const std::string& dependency_name : package_configuration.build_dependencies) {
-				create(dependency_name, packages, package_configurations);
-				dependencies.push_back(&packages.at(dependency_name));
-			}
-			packages.insert({ name, Package(name, package_configuration.url, package_configuration.branch, package_configuration.build_command, package_configuration.post_build_command, std::move(dependencies), std::move(build_dependencies), package_configuration.commit) });
+			add_package(dependency_name, packages, package_configurations);
+			dependencies.push_back(&packages.at(dependency_name));
 		}
+		std::vector<Package*> build_dependencies;
+		for (const std::string& dependency_name : package_configuration.build_dependencies) {
+			add_package(dependency_name, packages, package_configurations);
+			dependencies.push_back(&packages.at(dependency_name));
+		}
+		packages.insert({ name, Package(name, package_configuration.url, package_configuration.branch, package_configuration.build_command, package_configuration.post_build_command, std::move(dependencies), std::move(build_dependencies), package_configuration.commit) });
 	}
+}

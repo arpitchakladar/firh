@@ -16,7 +16,7 @@ struct PackageConfiguration {
 	std::string commit;
 };
 
-std::unordered_map<std::string, PackageConfiguration> get_package_configuration();
+std::unordered_map<std::string, PackageConfiguration> get_package_configurations();
 
 namespace YAML {
 	template<>
