@@ -8,17 +8,15 @@
 #include "package_configuration.hpp"
 #include "filesystem.hpp"
 
-namespace package_configuration {
-	std::unordered_map<std::string, PackageConfigurationInformation> get_package_configuration() {
-		std::string firh_packages_path = std::string(std::getenv("HOME")) + "/.config/firh/packages.yml";
-		filesystem::create_file(firh_packages_path);
-		std::unordered_map<std::string, PackageConfigurationInformation> package_configuration;
-		YAML::Node firh_packages = YAML::LoadFile(firh_packages_path);
-		for (YAML::const_iterator it = firh_packages.begin(); it != firh_packages.end(); it++) {
-			package_configuration[it->first.as<std::string>()] = it->second.as<PackageConfigurationInformation>();
-		}
-		return package_configuration;
+std::unordered_map<std::string, PackageConfiguration> get_package_configuration() {
+	std::string firh_packages_path = "./tests/packages.yml";
+	create_file(firh_packages_path);
+	std::unordered_map<std::string, PackageConfiguration> package_configuration;
+	YAML::Node firh_packages = YAML::LoadFile(firh_packages_path);
+	for (YAML::const_iterator it = firh_packages.begin(); it != firh_packages.end(); it++) {
+		package_configuration[it->first.as<std::string>()] = it->second.as<PackageConfiguration>();
 	}
+	return package_configuration;
 }
 
 template<typename T>
@@ -31,7 +29,7 @@ static T _get_optional_node_field(const YAML::Node& node, std::string&& field) {
 }
 
 namespace YAML {
-	Node convert<package_configuration::PackageConfigurationInformation>::encode(const package_configuration::PackageConfigurationInformation& rhs) {
+	Node convert<PackageConfiguration>::encode(const PackageConfiguration& rhs) {
 		Node node;
 		node["url"] = rhs.url;
 		node["branch"] = rhs.branch;
@@ -43,7 +41,7 @@ namespace YAML {
 		return node;
 	}
 
-	bool convert<package_configuration::PackageConfigurationInformation>::decode(const Node& node, package_configuration::PackageConfigurationInformation& rhs) {
+	bool convert<PackageConfiguration>::decode(const Node& node, PackageConfiguration& rhs) {
 		if (!node.IsMap()) {
 			return false;
 		}

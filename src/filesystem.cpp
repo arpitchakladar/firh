@@ -11,22 +11,20 @@ static int _unlink_cb(const char* fpath, const struct stat* _sb, int _typeflag, 
 	return remove(fpath);
 }
 
-namespace filesystem {
-	void remove_directory(const std::string& path) {
-		nftw(path.c_str(), _unlink_cb, 64, FTW_DEPTH | FTW_PHYS);
-	}
+void remove_directory(const std::string& path) {
+	nftw(path.c_str(), _unlink_cb, 64, FTW_DEPTH | FTW_PHYS);
+}
 
-	std::fstream open_file(const std::string& path) {
-		std::fstream file_stream;
-		file_stream.open(path, std::ios::out);
-		file_stream.close();
-		file_stream.open(path, std::ios::in | std::ios::out);
-		return file_stream;
-	}
+std::fstream open_file(const std::string& path) {
+	std::fstream file_stream;
+	file_stream.open(path, std::ios::out);
+	file_stream.close();
+	file_stream.open(path, std::ios::in | std::ios::out);
+	return file_stream;
+}
 
-	void create_file(const std::string& path) {
-		std::fstream file_stream;
-		file_stream.open(path, std::ios::in);
-		file_stream.close();
-	}
+void create_file(const std::string& path) {
+	std::fstream file_stream;
+	file_stream.open(path, std::ios::in);
+	file_stream.close();
 }
