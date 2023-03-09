@@ -7,6 +7,6 @@ i3kbar:
     - bazl
 
 bazl:
-  url: https://github.com/arpitchakladar/i3kbar
+  url: https://github.com/arpitchakladar/bazl
   branch: master
   build_command: ./scripts/build-make.sh

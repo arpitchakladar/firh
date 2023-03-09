@@ -7,16 +7,16 @@
 #include "package_configuration.hpp"
 #include "filesystem.hpp"
 
-static std::string _packages_path = "./tests/packages.yml";
+static std::string _package_configurations_path = "./tests/packages.yml";
 
 std::unordered_map<std::string, PackageConfiguration> get_package_configurations() {
-	std::unordered_map<std::string, PackageConfiguration> package_configuration;
-	create_file(_packages_path);
-	YAML::Node firh_packages = YAML::LoadFile(_packages_path);
-	for (YAML::const_iterator it = firh_packages.begin(); it != firh_packages.end(); it++) {
-		package_configuration[it->first.as<std::string>()] = it->second.as<PackageConfiguration>();
+	std::unordered_map<std::string, PackageConfiguration> package_configurations;
+	create_file(_package_configurations_path);
+	YAML::Node package_configurations_data = YAML::LoadFile(_package_configurations_path);
+	for (const YAML::detail::iterator_value& package_configuration : package_configurations_data) {
+		package_configurations[package_configuration.first.as<std::string>()] = package_configuration.second.as<PackageConfiguration>();
 	}
-	return package_configuration;
+	return package_configurations;
 }
 
 template<typename T>
