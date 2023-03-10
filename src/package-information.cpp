@@ -4,17 +4,13 @@
 
 #include "yaml-cpp/yaml.h"
 
-#include "package_information.hpp"
-#include "filesystem.hpp"
-
-static std::string _data_folder = std::string(std::getenv("HOME")) + "/.local/share/firh/";
-static std::string _package_information_path = _data_folder + "package-control.yml";
+#include "package-information.hpp"
+#include "file-system.hpp"
+#include "path.hpp"
 
 std::unordered_map<std::string, PackageInformation> get_package_informations() {
-	create_directory(_data_folder);
 	std::unordered_map<std::string, PackageInformation> package_informations;
-	create_file(_package_information_path);
-	YAML::Node package_informations_data = YAML::LoadFile(_package_information_path);
+	YAML::Node package_informations_data = YAML::LoadFile(Path::package_information_file_path);
 	for (const YAML::detail::iterator_value& package_information : package_informations_data) {
 		package_informations[package_information.first.as<std::string>()] = package_information.second.as<PackageInformation>();
 	}
@@ -22,7 +18,7 @@ std::unordered_map<std::string, PackageInformation> get_package_informations() {
 }
 
 void write_package_informations(std::unordered_map<std::string, PackageInformation>&& package_informations) {
-	std::fstream package_informations_file = open_file(_package_information_path);
+	std::fstream package_informations_file = FileSystem::open_file(Path::package_information_file_path);
 	package_informations_file << YAML::Node(package_informations);
 }
 

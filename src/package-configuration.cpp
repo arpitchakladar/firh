@@ -4,15 +4,12 @@
 
 #include "yaml-cpp/yaml.h"
 
-#include "package_configuration.hpp"
-#include "filesystem.hpp"
-
-static std::string _package_configurations_path = "./tests/packages.yml";
+#include "package-configuration.hpp"
+#include "path.hpp"
 
 std::unordered_map<std::string, PackageConfiguration> get_package_configurations() {
 	std::unordered_map<std::string, PackageConfiguration> package_configurations;
-	create_file(_package_configurations_path);
-	YAML::Node package_configurations_data = YAML::LoadFile(_package_configurations_path);
+	YAML::Node package_configurations_data = YAML::LoadFile(Path::package_configuration_file_path);
 	for (const YAML::detail::iterator_value& package_configuration : package_configurations_data) {
 		package_configurations[package_configuration.first.as<std::string>()] = package_configuration.second.as<PackageConfiguration>();
 	}

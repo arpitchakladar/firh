@@ -5,8 +5,8 @@
 
 #include "git.hpp"
 #include "package.hpp"
-#include "package_information.hpp"
-#include "package_configuration.hpp"
+#include "package-information.hpp"
+#include "package-configuration.hpp"
 
 Package::Package(const std::string& name, const std::string& repository_url, const std::string& branch, const std::string& build_command, const std::string& post_build_command, std::vector<Package*>&& dependencies, std::vector<Package*>&& build_dependencies, const std::string& commit)
 	: _name(name), _branch(branch), _post_build_command(post_build_command), _dependencies(dependencies), _build_dependencies(build_dependencies), _commit(commit), _repository(_name, repository_url), _built(false) {
@@ -33,7 +33,9 @@ void Package::build(std::unordered_map<std::string, PackageInformation>& package
 		package_information.commit = current_commit;
 		time_t _current_time = time(NULL);
 		struct tm* current_time = localtime(&_current_time);
-		package_information.last_updated = asctime(current_time);
+		std::string last_updated = asctime(current_time);
+		last_updated.resize(last_updated.size() - 1);
+		package_information.last_updated = std::move(last_updated);
 		package_informations[_name] = package_information;
 	}
 }
