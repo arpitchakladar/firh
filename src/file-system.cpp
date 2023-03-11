@@ -1,9 +1,7 @@
 #include <ftw.h>
-#include <unistd.h>
 #include <string>
 #include <cstdio>
 #include <fstream>
-#include <iostream>
 
 #include "file-system.hpp"
 

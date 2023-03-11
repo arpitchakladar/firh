@@ -22,20 +22,18 @@ void write_package_informations(std::unordered_map<std::string, PackageInformati
 	package_informations_file << YAML::Node(package_informations);
 }
 
-namespace YAML {
-	Node convert<PackageInformation>::encode(const PackageInformation& rhs) {
-		Node node;
-		node["commit"] = rhs.commit;
-		node["last_updated"] = rhs.last_updated;
-		return node;
-	}
+YAML::Node YAML::convert<PackageInformation>::encode(const PackageInformation& rhs) {
+	YAML::Node node;
+	node["commit"] = rhs.commit;
+	node["last_updated"] = rhs.last_updated;
+	return node;
+}
 
-	bool convert<PackageInformation>::decode(const Node& node, PackageInformation& rhs) {
-		if (!node.IsMap()) {
-			return false;
-		}
-		rhs.commit = std::move(node["commit"].as<std::string>());
-		rhs.last_updated = std::move(node["last_updated"].as<std::string>());
-		return true;
+bool YAML::convert<PackageInformation>::decode(const YAML::Node& node, PackageInformation& rhs) {
+	if (!node.IsMap()) {
+		return false;
 	}
+	rhs.commit = std::move(node["commit"].as<std::string>());
+	rhs.last_updated = std::move(node["last_updated"].as<std::string>());
+	return true;
 }

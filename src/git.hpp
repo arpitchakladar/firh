@@ -12,6 +12,6 @@ public:
 	const std::string& get_local_path() const { return _local_path; }
 
 private:
-	git_repository* _repository;
+	git_repository* _git_repository;
 	std::string _local_path;
 };

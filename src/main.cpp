@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <string>
 #include <unordered_map>
+#include <iostream>
 
 #include "git.hpp"
 #include "package.hpp"
@@ -16,6 +17,9 @@ int main(int argc, char* argv[]) {
 	std::unordered_map<std::string, PackageInformation> package_informations = get_package_informations();
 	for (std::pair<const std::string, Package>& package : packages) {
 		package.second.build(package_informations);
+	}
+	for (std::pair<const std::string, Package>& package : packages) {
+		package.second.post_build();
 	}
 	write_package_informations(std::move(package_informations));
 	return EXIT_SUCCESS;

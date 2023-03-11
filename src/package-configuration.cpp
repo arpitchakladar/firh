@@ -25,30 +25,28 @@ static T _get_optional_node_field(const YAML::Node& node, std::string&& field) {
 	}
 }
 
-namespace YAML {
-	Node convert<PackageConfiguration>::encode(const PackageConfiguration& rhs) {
-		Node node;
-		node["url"] = rhs.url;
-		node["branch"] = rhs.branch;
-		node["build_command"] = rhs.build_command;
-		if (rhs.post_build_command.size() > 0) node["post_build_command"] = rhs.post_build_command;
-		if (rhs.dependencies.size() > 0) node["dependencies"] = rhs.dependencies;
-		if (rhs.build_dependencies.size() > 0) node["build_dependencies"] = rhs.build_dependencies;
-		if (rhs.commit.size() > 0) node["commit"] = rhs.commit;
-		return node;
-	}
+YAML::Node YAML::convert<PackageConfiguration>::encode(const PackageConfiguration& rhs) {
+	YAML::Node node;
+	node["url"] = rhs.url;
+	node["branch"] = rhs.branch;
+	node["build_command"] = rhs.build_command;
+	if (!rhs.post_build_command.empty()) node["post_build_command"] = rhs.post_build_command;
+	if (!rhs.dependencies.empty()) node["dependencies"] = rhs.dependencies;
+	if (!rhs.build_dependencies.empty()) node["build_dependencies"] = rhs.build_dependencies;
+	if (!rhs.commit.empty()) node["commit"] = rhs.commit;
+	return node;
+}
 
-	bool convert<PackageConfiguration>::decode(const Node& node, PackageConfiguration& rhs) {
-		if (!node.IsMap()) {
-			return false;
-		}
-		rhs.url = std::move(node["url"].as<std::string>());
-		rhs.branch = std::move(node["branch"].as<std::string>());
-		rhs.build_command = std::move(node["build_command"].as<std::string>());
-		rhs.post_build_command = _get_optional_node_field<std::string>(node, "post_build_command");
-		rhs.dependencies = _get_optional_node_field<std::vector<std::string>>(node, "dependencies");
-		rhs.build_dependencies = _get_optional_node_field<std::vector<std::string>>(node, "build_dependencies");
-		rhs.commit = _get_optional_node_field<std::string>(node, "commit");
-		return true;
+bool YAML::convert<PackageConfiguration>::decode(const YAML::Node& node, PackageConfiguration& rhs) {
+	if (!node.IsMap()) {
+		return false;
 	}
+	rhs.url = std::move(node["url"].as<std::string>());
+	rhs.branch = std::move(node["branch"].as<std::string>());
+	rhs.build_command = std::move(node["build_command"].as<std::string>());
+	rhs.post_build_command = _get_optional_node_field<std::string>(node, "post_build_command");
+	rhs.dependencies = _get_optional_node_field<std::vector<std::string>>(node, "dependencies");
+	rhs.build_dependencies = _get_optional_node_field<std::vector<std::string>>(node, "build_dependencies");
+	rhs.commit = _get_optional_node_field<std::string>(node, "commit");
+	return true;
 }

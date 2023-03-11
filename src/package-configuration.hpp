@@ -18,10 +18,8 @@ struct PackageConfiguration {
 
 std::unordered_map<std::string, PackageConfiguration> get_package_configurations();
 
-namespace YAML {
-	template<>
-	struct convert<PackageConfiguration> {
-		static Node encode(const PackageConfiguration& rhs);
-		static bool decode(const Node& node, PackageConfiguration& rhs);
-	};
-}
+template<>
+struct YAML::convert<PackageConfiguration> {
+	static YAML::Node encode(const PackageConfiguration& rhs);
+	static bool decode(const YAML::Node& node, PackageConfiguration& rhs);
+};
