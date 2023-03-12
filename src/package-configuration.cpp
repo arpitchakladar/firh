@@ -42,7 +42,7 @@ bool YAML::convert<PackageConfiguration>::decode(const YAML::Node& node, Package
 		return false;
 	}
 	rhs.url = std::move(node["url"].as<std::string>());
-	rhs.branch = std::move(node["branch"].as<std::string>());
+	rhs.branch = _get_optional_node_field<std::string>(node, "branch");
 	rhs.build_command = std::move(node["build_command"].as<std::string>());
 	rhs.post_build_command = _get_optional_node_field<std::string>(node, "post_build_command");
 	rhs.dependencies = _get_optional_node_field<std::vector<std::string>>(node, "dependencies");

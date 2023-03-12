@@ -18,12 +18,10 @@ public:
 private:
 	std::string _name;
 	GitRepository _git_repository;
-	std::string _branch;
 	std::string _build_command;
 	std::string _post_build_command;
 	std::vector<Package*> _dependencies;
 	std::vector<Package*> _build_dependencies;
-	std::string _commit;
 	bool _built;
 	static void _from_configurations(const std::string& name, std::unordered_map<std::string, Package>& packages, const std::unordered_map<std::string, PackageConfiguration>& package_configurations);
 };

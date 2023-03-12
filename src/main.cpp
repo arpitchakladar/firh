@@ -1,7 +1,6 @@
 #include <cstdlib>
 #include <string>
 #include <unordered_map>
-#include <iostream>
 
 #include "git.hpp"
 #include "package.hpp"
