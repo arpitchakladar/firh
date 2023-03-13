@@ -1,7 +1,9 @@
 #include <ftw.h>
+#include <sys/stat.h>
 #include <string>
 #include <cstdio>
 #include <fstream>
+#include <fcntl.h>
 
 #include "file-system.hpp"
 
@@ -14,7 +16,16 @@ void FileSystem::remove_directory(const std::string& path) {
 }
 
 void FileSystem::create_directory(const std::string& path) {
-	mkdir(path.c_str(), 0777);
+	for (size_t i = 0; i < path.size(); i++) {
+		char c = path[i];
+		if (c == '/') {
+			mkdir(path.substr(0, i).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+		}
+	}
+
+	if (path[path.size() - 1] != '/') {
+		mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+	}
 }
 
 std::fstream FileSystem::open_file(const std::string& path) {
@@ -27,6 +38,5 @@ std::fstream FileSystem::open_file(const std::string& path) {
 }
 
 void FileSystem::create_file(const std::string& path) {
-	std::fstream file_stream = open_file(path);
-	file_stream.close();
+	creat(path.c_str(), S_IRUSR | S_IWUSR);
 }

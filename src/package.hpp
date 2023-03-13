@@ -23,5 +23,6 @@ private:
 	std::vector<Package*> _dependencies;
 	std::vector<Package*> _build_dependencies;
 	bool _built;
+	bool _build_success;
 	static void _from_configurations(const std::string& name, std::unordered_map<std::string, Package>& packages, const std::unordered_map<std::string, PackageConfiguration>& package_configurations);
 };

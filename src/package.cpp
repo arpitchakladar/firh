@@ -7,46 +7,50 @@
 #include "package.hpp"
 #include "package-information.hpp"
 #include "package-configuration.hpp"
+#include "build-command.hpp"
 
 Package::Package(const std::string& name, const std::string& repository_url, const std::string& branch, const std::string& build_command, const std::string& post_build_command, std::vector<Package*>&& dependencies, std::vector<Package*>&& build_dependencies, const std::string& commit)
 	: _name(name),
-		_build_command("cd " + _git_repository.get_local_path() + " && " + build_command),
-		_post_build_command("cd " + _git_repository.get_local_path() + " && " + post_build_command),
+		_build_command(build_command),
+		_post_build_command(post_build_command),
 		_dependencies(dependencies),
 		_build_dependencies(build_dependencies),
 		_git_repository(_name, repository_url, branch, commit),
-		_built(false)
+		_built(false),
+		_build_success(false)
 {}
 
 void Package::build(std::unordered_map<std::string, PackageInformation>& package_informations) {
-	PackageInformation package_information;
-	std::unordered_map<std::string, PackageInformation>::iterator package_information_entry = package_informations.find(_name);
-	if (package_information_entry != package_informations.end()) {
-		package_information = package_information_entry->second;
-	}
-	std::string current_commit = _git_repository.get_head_commit();
-	if (!_built && package_information.commit != current_commit) {
-		for (Package* package : _dependencies) {
-			package->build(package_informations);
+	if (!_built) {
+		PackageInformation package_information;
+		std::unordered_map<std::string, PackageInformation>::iterator package_information_entry = package_informations.find(_name);
+		if (package_information_entry != package_informations.end()) {
+			package_information = package_information_entry->second;
 		}
-		for (Package* package : _build_dependencies) {
-			package->build(package_informations);
+		std::string current_commit = _git_repository.get_head_commit();
+		if (package_information.commit != current_commit) {
+			for (Package* package : _dependencies) {
+				package->build(package_informations);
+			}
+			for (Package* package : _build_dependencies) {
+				package->build(package_informations);
+			}
+			_build_success = BuildCommand::run(_build_command, _git_repository.get_local_path(), _name + "-build");
+			_built = true;
+			package_information.commit = current_commit;
+			time_t _current_time = time(NULL);
+			struct tm* current_time = localtime(&_current_time);
+			std::string last_updated = asctime(current_time);
+			last_updated.resize(last_updated.size() - 1);
+			package_information.last_updated = std::move(last_updated);
+			package_informations[_name] = package_information;
 		}
-		system(_build_command.c_str());
-		_built = true;
-		package_information.commit = current_commit;
-		time_t _current_time = time(NULL);
-		struct tm* current_time = localtime(&_current_time);
-		std::string last_updated = asctime(current_time);
-		last_updated.resize(last_updated.size() - 1);
-		package_information.last_updated = std::move(last_updated);
-		package_informations[_name] = package_information;
 	}
 }
 
 void Package::post_build() {
-	if (_built && !_post_build_command.empty()) {
-		system(_post_build_command.c_str());
+	if (_built && _build_success && !_post_build_command.empty()) {
+		BuildCommand::run(_post_build_command, _git_repository.get_local_path(), _name + "-post-build");
 	}
 }
 
