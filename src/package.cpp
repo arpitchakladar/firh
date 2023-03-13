@@ -9,7 +9,16 @@
 #include "package-configuration.hpp"
 #include "build-command.hpp"
 
-Package::Package(const std::string& name, const std::string& repository_url, const std::string& branch, const std::string& build_command, const std::string& post_build_command, std::vector<Package*>&& dependencies, std::vector<Package*>&& build_dependencies, const std::string& commit)
+Package::Package(
+	const std::string& name,
+	const std::string& repository_url,
+	const std::string& branch,
+	const std::string& build_command,
+	const std::string& post_build_command,
+	std::vector<Package*>&& dependencies,
+	std::vector<Package*>&& build_dependencies,
+	const std::string& commit
+)
 	: _name(name),
 		_build_command(build_command),
 		_post_build_command(post_build_command),
@@ -35,7 +44,7 @@ void Package::build(std::unordered_map<std::string, PackageInformation>& package
 			for (Package* package : _build_dependencies) {
 				package->build(package_informations);
 			}
-			_build_success = BuildCommand::run(_build_command, _git_repository.get_local_path(), _name + "-build");
+			_build_success = BuildCommand::run(_name, _build_command, "build");
 			_built = true;
 			package_information.commit = current_commit;
 			time_t _current_time = time(NULL);
@@ -50,11 +59,13 @@ void Package::build(std::unordered_map<std::string, PackageInformation>& package
 
 void Package::post_build() {
 	if (_built && _build_success && !_post_build_command.empty()) {
-		BuildCommand::run(_post_build_command, _git_repository.get_local_path(), _name + "-post-build");
+		BuildCommand::run(_name, _post_build_command, "post-build");
 	}
 }
 
-std::unordered_map<std::string, Package> Package::from_configurations(const std::unordered_map<std::string, PackageConfiguration>& package_configurations) {
+std::unordered_map<std::string, Package> Package::from_configurations(
+	const std::unordered_map<std::string, PackageConfiguration>& package_configurations
+) {
 	std::unordered_map<std::string, Package> packages;
 	for (const std::pair<std::string, PackageConfiguration>& package_configuration : package_configurations) {
 		_from_configurations(package_configuration.first, packages, package_configurations);
@@ -62,7 +73,10 @@ std::unordered_map<std::string, Package> Package::from_configurations(const std:
 	return packages;
 }
 
-void Package::_from_configurations(const std::string& name, std::unordered_map<std::string, Package>& packages, const std::unordered_map<std::string, PackageConfiguration>& package_configurations) {
+void Package::_from_configurations(
+	const std::string& name, std::unordered_map<std::string, Package>& packages,
+	const std::unordered_map<std::string, PackageConfiguration>& package_configurations
+) {
 	if (packages.find(name) == packages.end()) {
 		const PackageConfiguration& package_configuration = package_configurations.at(name);
 		std::vector<Package*> dependencies;

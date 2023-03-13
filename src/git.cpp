@@ -8,7 +8,12 @@
 
 #include <iostream>
 
-GitRepository::GitRepository(const std::string& name, const std::string& remote_url, const std::string& branch, const std::string& head_commit)
+GitRepository::GitRepository(
+	const std::string& name,
+	const std::string& remote_url,
+	const std::string& branch,
+	const std::string& head_commit
+)
 	: _local_path(Path::git_repository_cache_directory + name),
 		_branch(branch),
 		_head_commit(head_commit)

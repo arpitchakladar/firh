@@ -4,5 +4,5 @@
 
 class BuildCommand {
 public:
-	static bool run(const std::string& command, const std::string& context_directory, const std::string& log_path);
+	static bool run(const std::string& name, const std::string& command, const std::string& type);
 };
