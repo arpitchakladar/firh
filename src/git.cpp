@@ -5,7 +5,7 @@
 #include "git.hpp"
 #include "file-system.hpp"
 #include "path.hpp"
-#include "loader.hpp"
+#include "loader/bar.hpp"
 
 static int _fetch_progress(
 	const git_indexer_progress *stats,

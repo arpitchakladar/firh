@@ -3,7 +3,7 @@
 #include "command.hpp"
 #include "file-system.hpp"
 #include "path.hpp"
-#include "loader.hpp"
+#include "loader/infinite.hpp"
 
 bool Command::run(const std::string& name, const std::string& command, CommandType command_type) {
 	std::string absolute_log_directory_path = Path::build_log_cache_directory + name;
