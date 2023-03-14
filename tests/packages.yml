@@ -8,4 +8,4 @@ i3kbar:
 bazl:
   url: https://github.com/arpitchakladar/bazl
   branch: master
-  build_command: ./scripts/build-make.sh
+  build_command: echo Done

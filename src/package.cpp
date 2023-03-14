@@ -2,12 +2,14 @@
 #include <vector>
 #include <unordered_map>
 #include <ctime>
+#include <iostream>
 
 #include "git.hpp"
 #include "package.hpp"
 #include "package-information.hpp"
 #include "package-configuration.hpp"
 #include "build-command.hpp"
+#include "loader.hpp"
 
 Package::Package(
 	const std::string& name,
@@ -38,28 +40,38 @@ void Package::build(std::unordered_map<std::string, PackageInformation>& package
 		}
 		std::string current_commit = _git_repository.get_head_commit();
 		if (package_information.commit != current_commit) {
-			for (Package* package : _dependencies) {
+			bool successfully_built_dependencies = true;
+			for (size_t i = 0; i < _dependencies.size() && successfully_built_dependencies; i++) {
+				Package* package = _dependencies[i];
 				package->build(package_informations);
+				successfully_built_dependencies = package->_build_success;
 			}
-			for (Package* package : _build_dependencies) {
+			for (size_t i = 0; i < _build_dependencies.size() && successfully_built_dependencies; i++) {
+				Package* package = _build_dependencies[i];
 				package->build(package_informations);
+				successfully_built_dependencies = package->_build_success;
 			}
-			_build_success = BuildCommand::run(_name, _build_command, "build");
-			_built = true;
-			package_information.commit = current_commit;
-			time_t _current_time = time(NULL);
-			struct tm* current_time = localtime(&_current_time);
-			std::string last_updated = asctime(current_time);
-			last_updated.resize(last_updated.size() - 1);
-			package_information.last_updated = std::move(last_updated);
-			package_informations[_name] = package_information;
+			if (successfully_built_dependencies) {
+				InfiniteLoader loader("Building package " + _name);
+				_build_success = BuildCommand::run(_name, _build_command, "build");
+				loader.finish(_build_success);
+				_built = true;
+				package_information.commit = current_commit;
+				time_t _current_time = time(NULL);
+				struct tm* current_time = localtime(&_current_time);
+				std::string last_updated = asctime(current_time);
+				last_updated.resize(last_updated.size() - 1);
+				package_information.last_updated = std::move(last_updated);
+				package_informations[_name] = package_information;
+			}
 		}
 	}
 }
 
 void Package::post_build() {
 	if (_built && _build_success && !_post_build_command.empty()) {
-		BuildCommand::run(_name, _post_build_command, "post-build");
+		InfiniteLoader loader("Running post build for " + _name);
+		loader.finish(BuildCommand::run(_name, _post_build_command, "post-build"));
 	}
 }
 
