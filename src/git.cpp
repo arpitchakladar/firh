@@ -5,8 +5,16 @@
 #include "git.hpp"
 #include "file-system.hpp"
 #include "path.hpp"
+#include "loader.hpp"
 
-#include <iostream>
+static int _fetch_progress(
+	const git_indexer_progress *stats,
+	void *bar_loader_payload
+) {
+	BarLoader& loader = *((BarLoader*) bar_loader_payload);
+	loader.update_loader((stats->indexed_objects * 100) / stats->total_objects);
+	return 0;
+}
 
 GitRepository::GitRepository(
 	const std::string& name,
@@ -23,7 +31,11 @@ GitRepository::GitRepository(
 	if (!_branch.empty()) {
 		clone_options.checkout_branch = branch.c_str();
 	}
+	BarLoader loader("Cloning repository \033[32;1m" + name + "\033[m");
+	clone_options.fetch_opts.callbacks.payload = &loader;
+	clone_options.fetch_opts.callbacks.transfer_progress = _fetch_progress;
 	git_clone(&_git_repository, remote_url.c_str(), _local_path.c_str(), &clone_options);
+	loader.finish(true);
 	if (_head_commit.empty()) {
 		git_oid oid_parent_commit;
 		git_reference_name_to_id(&oid_parent_commit, _git_repository, "HEAD");

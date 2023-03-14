@@ -8,8 +8,7 @@
 #include "package.hpp"
 #include "package-information.hpp"
 #include "package-configuration.hpp"
-#include "build-command.hpp"
-#include "loader.hpp"
+#include "command.hpp"
 
 Package::Package(
 	const std::string& name,
@@ -52,9 +51,7 @@ void Package::build(std::unordered_map<std::string, PackageInformation>& package
 				successfully_built_dependencies = package->_build_success;
 			}
 			if (successfully_built_dependencies) {
-				InfiniteLoader loader("Building package " + _name);
-				_build_success = BuildCommand::run(_name, _build_command, "build");
-				loader.finish(_build_success);
+				_build_success = Command::run(_name, _build_command, CommandType::Build);
 				_built = true;
 				package_information.commit = current_commit;
 				time_t _current_time = time(NULL);
@@ -70,8 +67,7 @@ void Package::build(std::unordered_map<std::string, PackageInformation>& package
 
 void Package::post_build() {
 	if (_built && _build_success && !_post_build_command.empty()) {
-		InfiniteLoader loader("Running post build for " + _name);
-		loader.finish(BuildCommand::run(_name, _post_build_command, "post-build"));
+		Command::run(_name, _post_build_command, CommandType::PostBuild);
 	}
 }
 
