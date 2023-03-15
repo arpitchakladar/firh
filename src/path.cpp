@@ -8,8 +8,12 @@ std::string Path::build_log_cache_directory;
 std::string Path::package_configuration_file_path;
 std::string Path::package_information_file_path;
 
-void Path::init() {
+void Path::initialize() {
+#ifdef DEBUG
 	std::string data_directory = std::string(std::getenv("HOME")) + "/.local/share/firh";
+#else
+	std::string data_directory = "/usr/local/share/firh";
+#endif
 	FileSystem::create_directory(data_directory);
 	git_repository_cache_directory = "/tmp/firh/repositories/";
 	FileSystem::create_directory(git_repository_cache_directory);

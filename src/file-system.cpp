@@ -38,5 +38,5 @@ std::fstream FileSystem::open_file(const std::string& path) {
 }
 
 void FileSystem::create_file(const std::string& path) {
-	creat(path.c_str(), S_IRUSR | S_IWUSR);
+	open_file(path).close();
 }

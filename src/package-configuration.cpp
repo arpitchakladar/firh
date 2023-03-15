@@ -29,10 +29,9 @@ YAML::Node YAML::convert<PackageConfiguration>::encode(const PackageConfiguratio
 	YAML::Node node;
 	node["url"] = rhs.url;
 	node["branch"] = rhs.branch;
-	node["build_command"] = rhs.build_command;
+	if (!rhs.build_command.empty()) node["build_command"] = rhs.build_command;
 	if (!rhs.post_build_command.empty()) node["post_build_command"] = rhs.post_build_command;
 	if (!rhs.dependencies.empty()) node["dependencies"] = rhs.dependencies;
-	if (!rhs.build_dependencies.empty()) node["build_dependencies"] = rhs.build_dependencies;
 	if (!rhs.commit.empty()) node["commit"] = rhs.commit;
 	return node;
 }
@@ -43,10 +42,9 @@ bool YAML::convert<PackageConfiguration>::decode(const YAML::Node& node, Package
 	}
 	rhs.url = std::move(node["url"].as<std::string>());
 	rhs.branch = _get_optional_node_field<std::string>(node, "branch");
-	rhs.build_command = std::move(node["build_command"].as<std::string>());
+	rhs.build_command = _get_optional_node_field<std::string>(node, "build_command");
 	rhs.post_build_command = _get_optional_node_field<std::string>(node, "post_build_command");
 	rhs.dependencies = _get_optional_node_field<std::vector<std::string>>(node, "dependencies");
-	rhs.build_dependencies = _get_optional_node_field<std::vector<std::string>>(node, "build_dependencies");
 	rhs.commit = _get_optional_node_field<std::string>(node, "commit");
 	return true;
 }

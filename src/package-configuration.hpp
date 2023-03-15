@@ -12,7 +12,6 @@ struct PackageConfiguration {
 	std::string build_command;
 	std::string post_build_command;
 	std::vector<std::string> dependencies;
-	std::vector<std::string> build_dependencies;
 	std::string commit;
 };
 

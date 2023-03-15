@@ -44,6 +44,6 @@ GitRepository::GitRepository(
 	}
 }
 
-void GitRepository::init() {
+void GitRepository::initialize() {
 	git_libgit2_init();
 }

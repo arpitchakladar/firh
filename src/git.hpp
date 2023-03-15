@@ -12,7 +12,7 @@ public:
 		const std::string& branch,
 		const std::string& head_commit
 	);
-	static void init();
+	static void initialize();
 	const std::string& get_local_path() const { return _local_path; }
 	const std::string& get_branch() const { return _branch; }
 	const std::string& get_head_commit() const { return _head_commit; }

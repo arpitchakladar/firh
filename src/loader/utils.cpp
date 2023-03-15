@@ -9,5 +9,5 @@ void _print_loader_status(bool success, size_t truncate) {
 	for (size_t i = status_message.size() - 5; i < truncate; i++) {
 		std::cout << " ";
 	}
-	std::cout << std::endl;
+	std::cout << "\033[m" << std::endl;
 }

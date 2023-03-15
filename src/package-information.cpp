@@ -12,7 +12,7 @@ std::unordered_map<std::string, PackageInformation> get_package_informations() {
 	std::unordered_map<std::string, PackageInformation> package_informations;
 	YAML::Node package_informations_data = YAML::LoadFile(Path::package_information_file_path);
 	for (const YAML::detail::iterator_value& package_information : package_informations_data) {
-		package_informations[package_information.first.as<std::string>()] = package_information.second.as<PackageInformation>();
+		package_informations.insert({ package_information.first.as<std::string>(), package_information.second.as<PackageInformation>() });
 	}
 	return package_informations;
 }

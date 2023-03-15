@@ -17,7 +17,6 @@ public:
 		const std::string& build_command,
 		const std::string& post_build_command,
 		std::vector<Package*>&& dependencies,
-		std::vector<Package*>&& build_dependencies,
 		const std::string& commit
 	);
 	void build(std::unordered_map<std::string, PackageInformation>& package_informations);
@@ -32,7 +31,6 @@ private:
 	std::string _build_command;
 	std::string _post_build_command;
 	std::vector<Package*> _dependencies;
-	std::vector<Package*> _build_dependencies;
 	bool _built;
 	bool _build_success;
 	static void _from_configurations(
