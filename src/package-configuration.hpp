@@ -13,9 +13,8 @@ struct PackageConfiguration {
 	std::string post_build_command;
 	std::vector<std::string> dependencies;
 	std::string commit;
+	static std::unordered_map<std::string, PackageConfiguration> get();
 };
-
-std::unordered_map<std::string, PackageConfiguration> get_package_configurations();
 
 template<>
 struct YAML::convert<PackageConfiguration> {

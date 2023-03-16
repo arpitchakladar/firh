@@ -28,14 +28,16 @@ GitRepository::GitRepository(
 {
 	FileSystem::remove_directory(_local_path);
 	git_clone_options clone_options = GIT_CLONE_OPTIONS_INIT;
-	if (!_branch.empty()) {
+
+	if (!_branch.empty())
 		clone_options.checkout_branch = branch.c_str();
-	}
+
 	BarLoader loader("Cloning repository \033[32;1m" + name + "\033[m");
 	clone_options.fetch_opts.callbacks.payload = &loader;
 	clone_options.fetch_opts.callbacks.transfer_progress = _fetch_progress;
 	git_clone(&_git_repository, remote_url.c_str(), _local_path.c_str(), &clone_options);
 	loader.finish(true);
+
 	if (_head_commit.empty()) {
 		git_oid oid_parent_commit;
 		git_reference_name_to_id(&oid_parent_commit, _git_repository, "HEAD");

@@ -23,22 +23,26 @@ void InfiniteLoader::finish(bool success) {
 
 void InfiniteLoader::_show_loader() {
 	bool reverse = true;
+
 	for (size_t i = 0; _continue; i++) {
 		size_t pos = i % INFINITE_LOADER_LENGTH;
-		if (pos == 0) {
+
+		if (pos == 0)
 			reverse = !reverse;
-		}
-		if (reverse) {
+
+		if (reverse)
 			pos = INFINITE_LOADER_LENGTH - pos - 1;
-		}
+
 		std::cout << _message << " \033[33m[";
-		for (size_t j = 0; j < INFINITE_LOADER_LENGTH; j++) {
+
+		for (size_t j = 0; j < INFINITE_LOADER_LENGTH; j++)
 			std::cout << (j == pos ? "●" : " ");
-		}
+
 		std::cout << "]\033[m\r";
 		std::cout.flush();
 		usleep(100000);
 	}
+
 	std::cout << _message << " ";
 	_print_loader_status(_success, INFINITE_LOADER_LENGTH + 3);
 }

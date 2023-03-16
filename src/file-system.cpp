@@ -16,24 +16,21 @@ void FileSystem::remove_directory(const std::string& path) {
 }
 
 void FileSystem::create_directory(const std::string& path) {
-	for (size_t i = 0; i < path.size(); i++) {
-		char c = path[i];
-		if (c == '/') {
+	for (size_t i = 0; i < path.size(); i++)
+		if (path[i] == '/')
 			mkdir(path.substr(0, i).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-		}
-	}
 
-	if (path[path.size() - 1] != '/') {
+	if (path[path.size() - 1] != '/')
 		mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-	}
 }
 
 std::fstream FileSystem::open_file(const std::string& path) {
 	std::fstream file_stream;
 	file_stream.open(path, std::ios::in | std::ios::out);
-	if (!file_stream) {
+
+	if (!file_stream)
 		file_stream.open(path, std::ios::in | std::ios::out | std::ios::trunc);
-	}
+
 	return file_stream;
 }
 

@@ -16,5 +16,6 @@ bool Command::run(const std::string& name, const std::string& command, CommandTy
 	InfiniteLoader loader(loader_message);
 	bool success = system(final_command.c_str()) == 0;
 	loader.finish(success);
+
 	return success;
 }

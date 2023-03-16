@@ -8,10 +8,9 @@
 struct PackageInformation {
 	std::string commit;
 	std::string last_updated;
+	static std::unordered_map<std::string, PackageInformation> get();
+	static void write(std::unordered_map<std::string, PackageInformation>&& package_informations);
 };
-
-std::unordered_map<std::string, PackageInformation> get_package_informations();
-void write_package_informations(std::unordered_map<std::string, PackageInformation>&& package_informations);
 
 template<>
 struct YAML::convert<PackageInformation> {
