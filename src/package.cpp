@@ -30,10 +30,9 @@ Package::Package(
 
 void Package::build(std::unordered_map<std::string, PackageInformation>& package_informations) {
 	if (!_built) {
-		if (_build_command.empty())
+		if (_build_command.empty()) {
 			_build_success = true;
-
-		else {
+		} else {
 			PackageInformation package_information;
 			std::unordered_map<std::string, PackageInformation>::iterator package_information_entry = package_informations.find(_name);
 			if (package_information_entry != package_informations.end())
@@ -61,7 +60,6 @@ void Package::build(std::unordered_map<std::string, PackageInformation>& package
 					package_information.last_updated = std::move(last_updated);
 					package_informations[_name] = package_information;
 				}
-
 			} else {
 				_build_success = true;
 				std::cout << "Commits matched for \033[32;1m" << _name << "\033[m, no need to build \033[33m[Skipping]\033[m" << std::endl;
@@ -103,7 +101,7 @@ void Package::_from_configurations(
 			name,
 			Package(
 				name,
-				package_configuration.url,
+				package_configuration.repository_url,
 				package_configuration.branch,
 				package_configuration.build_command,
 				package_configuration.post_build_command,

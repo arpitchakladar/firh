@@ -7,7 +7,7 @@
 #pragma once
 
 struct PackageConfiguration {
-	std::string url;
+	std::string repository_url;
 	std::string branch;
 	std::string build_command;
 	std::string post_build_command;

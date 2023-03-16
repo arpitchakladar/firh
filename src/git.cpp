@@ -7,6 +7,8 @@
 #include "path.hpp"
 #include "loader/bar.hpp"
 
+#include <iostream>
+
 static int _fetch_progress(
 	const git_indexer_progress *stats,
 	void *bar_loader_payload
@@ -41,8 +43,15 @@ GitRepository::GitRepository(
 	if (_head_commit.empty()) {
 		git_oid oid_parent_commit;
 		git_reference_name_to_id(&oid_parent_commit, _git_repository, "HEAD");
-		_head_commit = std::string(GIT_OID_SHA1_HEXSIZE, '\0');
-		git_oid_nfmt(&_head_commit[0], GIT_OID_SHA1_HEXSIZE, &oid_parent_commit);
+		git_oid_nfmt(const_cast<char*>(_head_commit.c_str()), GIT_OID_SHA1_HEXSIZE, &oid_parent_commit);
+	} else {
+		git_oid oid_parent_commit;
+		git_oid_fromstrn(&oid_parent_commit, _head_commit.c_str(), GIT_OID_SHA1_HEXSIZE);
+		git_object* current_commit_object;
+		git_object_lookup(&current_commit_object, _git_repository, &oid_parent_commit, GIT_OBJECT_COMMIT);
+		git_checkout_options checkout_options = GIT_CHECKOUT_OPTIONS_INIT;
+		checkout_options.checkout_strategy = GIT_CHECKOUT_FORCE;
+		git_reset(_git_repository, static_cast<git_object*>(current_commit_object), GIT_RESET_HARD, &checkout_options);
 	}
 }
 

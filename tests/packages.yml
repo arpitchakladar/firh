@@ -1,11 +1,12 @@
 i3kbar:
   url: https://github.com/arpitchakladar/i3kbar
-  build_command: make config=release
-  post_build_command: mv ./build/a.out ~/.local/bin/i3kbar
+  build: make config=release
+  post-build: mv ./build/a.out ~/.local/bin/i3kbar
   dependencies:
     - bazl
 
 bazl:
   url: https://github.com/arpitchakladar/bazl
   branch: master
-  build_command: echo Done
+  commit: 59d6b3a3bc0bb6319f4a0d5a32b2e7af25f35639
+  build: echo Done

@@ -17,25 +17,16 @@ std::unordered_map<std::string, PackageConfiguration> PackageConfiguration::get(
 	return package_configurations;
 }
 
-template<typename T>
-static T _get_optional_node_field(const YAML::Node& node, std::string&& field) {
-	if (node[field])
-		return node[field].as<T>();
-
-	else
-		return T();
-}
-
 YAML::Node YAML::convert<PackageConfiguration>::encode(const PackageConfiguration& rhs) {
 	YAML::Node node;
-	node["url"] = rhs.url;
+	node["url"] = rhs.repository_url;
 	node["branch"] = rhs.branch;
 
 	if (!rhs.build_command.empty())
-		node["build_command"] = rhs.build_command;
+		node["build"] = rhs.build_command;
 
 	if (!rhs.post_build_command.empty())
-		node["post_build_command"] = rhs.post_build_command;
+		node["post-build"] = rhs.post_build_command;
 
 	if (!rhs.dependencies.empty())
 		node["dependencies"] = rhs.dependencies;
@@ -46,14 +37,19 @@ YAML::Node YAML::convert<PackageConfiguration>::encode(const PackageConfiguratio
 	return node;
 }
 
+template<typename T>
+static T _get_optional_node_field(const YAML::Node& node, std::string&& field) {
+	return node[field] ? node[field].as<T>() : T();
+}
+
 bool YAML::convert<PackageConfiguration>::decode(const YAML::Node& node, PackageConfiguration& rhs) {
 	if (!node.IsMap())
 		return false;
 
-	rhs.url = std::move(node["url"].as<std::string>());
+	rhs.repository_url = std::move(node["url"].as<std::string>());
 	rhs.branch = _get_optional_node_field<std::string>(node, "branch");
-	rhs.build_command = _get_optional_node_field<std::string>(node, "build_command");
-	rhs.post_build_command = _get_optional_node_field<std::string>(node, "post_build_command");
+	rhs.build_command = _get_optional_node_field<std::string>(node, "build");
+	rhs.post_build_command = _get_optional_node_field<std::string>(node, "post-build");
 	rhs.dependencies = _get_optional_node_field<std::vector<std::string>>(node, "dependencies");
 	rhs.commit = _get_optional_node_field<std::string>(node, "commit");
 

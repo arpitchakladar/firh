@@ -10,11 +10,12 @@ std::string Path::package_information_file_path;
 
 void Path::initialize() {
 #ifdef DEBUG
-	std::string data_directory = std::string(std::getenv("HOME")) + "/.local/share/firh";
-	package_configuration_file_path = std::string(CURRENT_DIRECTORY) + "/tests/packages.yml";
+	std::string current_directory = CURRENT_DIRECTORY;
+	std::string data_directory = current_directory + "/build/tests/";
+	package_configuration_file_path = current_directory + "/tests/packages.yml";
 #else
-	std::string data_directory = "/usr/local/share/firh";
-	package_configuration_file_path = data_directory + "/packages.yml";
+	std::string data_directory = "/usr/local/share/firh/";
+	package_configuration_file_path = data_directory + "packages.yml";
 	FileSystem::create_file(package_configuration_file_path);
 #endif
 
@@ -26,6 +27,6 @@ void Path::initialize() {
 	build_log_cache_directory = "/tmp/firh/log/";
 	FileSystem::create_directory(build_log_cache_directory);
 
-	package_information_file_path = data_directory + "/.package-data.yml";
+	package_information_file_path = data_directory + ".package-data.yml";
 	FileSystem::create_file(package_information_file_path);
 }
