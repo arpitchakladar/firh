@@ -19,7 +19,7 @@ std::unordered_map<std::string, PackageConfiguration> PackageConfiguration::get(
 
 YAML::Node YAML::convert<PackageConfiguration>::encode(const PackageConfiguration& rhs) {
 	YAML::Node node;
-	node["url"] = rhs.repository_url;
+	node["url"] = rhs.git_repository_remote_url;
 	node["branch"] = rhs.branch;
 
 	if (!rhs.build_command.empty())
@@ -46,7 +46,7 @@ bool YAML::convert<PackageConfiguration>::decode(const YAML::Node& node, Package
 	if (!node.IsMap())
 		return false;
 
-	rhs.repository_url = std::move(node["url"].as<std::string>());
+	rhs.git_repository_remote_url = node["url"].as<std::string>();
 	rhs.branch = _get_optional_node_field<std::string>(node, "branch");
 	rhs.build_command = _get_optional_node_field<std::string>(node, "build");
 	rhs.post_build_command = _get_optional_node_field<std::string>(node, "post-build");

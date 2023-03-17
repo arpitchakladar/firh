@@ -21,9 +21,10 @@ int main(int argc, char* argv[]) {
 	Path::initialize();
 	GitRepository::initialize();
 
-	std::cout << "\033[36;4mCloning repositories\033[m" << std::endl;
+	std::cout << "\033[36;4mLoading configurations\033[m" << std::endl;
 	std::unordered_map<std::string, PackageConfiguration> package_configurations = PackageConfiguration::get();
 	std::unordered_map<std::string, PackageInformation> package_informations = PackageInformation::get();
+	std::cout << "\033[36;4mCloning repositories\033[m" << std::endl;
 	std::unordered_map<std::string, Package> packages = Package::from_configurations(package_configurations);
 	std::cout << "\033[36;4mBuilding\033[m" << std::endl;
 

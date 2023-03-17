@@ -21,12 +21,12 @@ static int _fetch_progress(
 GitRepository::GitRepository(
 	const std::string& name,
 	const std::string& remote_url,
-	const std::string& branch,
-	const std::string& head_commit
+	std::string&& branch,
+	std::string&& commit
 )
 	: _local_path(Path::git_repository_cache_directory + name),
-		_branch(branch),
-		_head_commit(head_commit)
+		_branch(std::move(branch)),
+		_commit(std::move(commit))
 {
 	FileSystem::remove_directory(_local_path);
 	git_clone_options clone_options = GIT_CLONE_OPTIONS_INIT;
@@ -40,13 +40,13 @@ GitRepository::GitRepository(
 	git_clone(&_git_repository, remote_url.c_str(), _local_path.c_str(), &clone_options);
 	loader.finish(true);
 
-	if (_head_commit.empty()) {
+	if (_commit.empty()) {
 		git_oid oid_parent_commit;
 		git_reference_name_to_id(&oid_parent_commit, _git_repository, "HEAD");
-		git_oid_nfmt(const_cast<char*>(_head_commit.c_str()), GIT_OID_SHA1_HEXSIZE, &oid_parent_commit);
+		git_oid_nfmt(const_cast<char*>(_commit.c_str()), GIT_OID_SHA1_HEXSIZE, &oid_parent_commit);
 	} else {
 		git_oid oid_parent_commit;
-		git_oid_fromstrn(&oid_parent_commit, _head_commit.c_str(), GIT_OID_SHA1_HEXSIZE);
+		git_oid_fromstrn(&oid_parent_commit, _commit.c_str(), GIT_OID_SHA1_HEXSIZE);
 		git_object* current_commit_object;
 		git_object_lookup(&current_commit_object, _git_repository, &oid_parent_commit, GIT_OBJECT_COMMIT);
 		git_checkout_options checkout_options = GIT_CHECKOUT_OPTIONS_INIT;

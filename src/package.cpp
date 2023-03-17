@@ -12,18 +12,18 @@
 
 Package::Package(
 	const std::string& name,
-	const std::string& repository_url,
-	const std::string& branch,
-	const std::string& build_command,
-	const std::string& post_build_command,
+	const std::string& git_repository_remote_url,
+	std::string&& branch,
+	std::string&& build_command,
+	std::string&& post_build_command,
 	std::vector<Package*>&& dependencies,
-	const std::string& commit
+	std::string&& commit
 )
 	: _name(name),
 		_build_command(build_command),
 		_post_build_command(post_build_command),
 		_dependencies(dependencies),
-		_git_repository(_name, repository_url, branch, commit),
+		_git_repository(_name, std::move(git_repository_remote_url), std::move(branch), std::move(commit)),
 		_built(false),
 		_build_success(false)
 {}
@@ -38,7 +38,7 @@ void Package::build(std::unordered_map<std::string, PackageInformation>& package
 			if (package_information_entry != package_informations.end())
 				package_information = package_information_entry->second;
 
-			std::string current_commit = _git_repository.get_head_commit();
+			std::string current_commit = _git_repository.get_commit();
 
 			if (package_information.commit != current_commit) {
 				bool successfully_built_dependencies = true;
@@ -74,7 +74,7 @@ void Package::post_build() {
 }
 
 std::unordered_map<std::string, Package> Package::from_configurations(
-	const std::unordered_map<std::string, PackageConfiguration>& package_configurations
+	std::unordered_map<std::string, PackageConfiguration>& package_configurations
 ) {
 	std::unordered_map<std::string, Package> packages;
 
@@ -86,10 +86,10 @@ std::unordered_map<std::string, Package> Package::from_configurations(
 
 void Package::_from_configurations(
 	const std::string& name, std::unordered_map<std::string, Package>& packages,
-	const std::unordered_map<std::string, PackageConfiguration>& package_configurations
+	std::unordered_map<std::string, PackageConfiguration>& package_configurations
 ) {
 	if (packages.find(name) == packages.end()) {
-		const PackageConfiguration& package_configuration = package_configurations.at(name);
+		PackageConfiguration& package_configuration = package_configurations.at(name);
 		std::vector<Package*> dependencies;
 
 		for (const std::string& dependency_name : package_configuration.dependencies) {
@@ -101,12 +101,12 @@ void Package::_from_configurations(
 			name,
 			Package(
 				name,
-				package_configuration.repository_url,
-				package_configuration.branch,
-				package_configuration.build_command,
-				package_configuration.post_build_command,
+				package_configuration.git_repository_remote_url,
+				std::move(package_configuration.branch),
+				std::move(package_configuration.build_command),
+				std::move(package_configuration.post_build_command),
 				std::move(dependencies),
-				package_configuration.commit
+				std::move(package_configuration.commit)
 			)
 		});
 	}
