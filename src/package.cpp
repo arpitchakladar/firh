@@ -25,14 +25,14 @@ Package::Package(
 		_dependencies(dependencies),
 		_git_repository(_name, std::move(git_repository_remote_url), std::move(branch), std::move(commit)),
 		_built(false),
-		_build_success(false)
+		_success(false)
 {}
 
 void Package::build(std::unordered_map<std::string, PackageInformation>& package_informations) {
 	if (!_built) {
-		if (_build_command.empty()) {
-			_build_success = true;
-		} else {
+		if (_build_command.empty())
+			_success = true;
+		else {
 			PackageInformation package_information;
 			std::unordered_map<std::string, PackageInformation>::iterator package_information_entry = package_informations.find(_name);
 			if (package_information_entry != package_informations.end())
@@ -41,27 +41,27 @@ void Package::build(std::unordered_map<std::string, PackageInformation>& package
 			std::string current_commit = _git_repository.get_commit();
 
 			if (package_information.commit != current_commit) {
-				bool successfully_built_dependencies = true;
-
-				for (size_t i = 0; i < _dependencies.size() && successfully_built_dependencies; i++) {
+				for (size_t i = 0; i < _dependencies.size() && _success; i++) {
 					Package* package = _dependencies[i];
 					package->build(package_informations);
-					successfully_built_dependencies = package->_build_success;
+					_success = package->_success;
 				}
 
-				if (successfully_built_dependencies) {
-					_build_success = Command::run(_name, _build_command, CommandType::Build);
+				if (_success) {
 					_built = true;
-					package_information.commit = current_commit;
-					time_t _current_time = time(NULL);
-					struct tm* current_time = localtime(&_current_time);
-					std::string last_updated = asctime(current_time);
-					last_updated.resize(last_updated.size() - 1);
-					package_information.last_updated = std::move(last_updated);
-					package_informations[_name] = package_information;
+					_success = Command::run(_name, _build_command, CommandType::Build);
+					if (_success) {
+						package_information.commit = std::move(current_commit);
+						time_t _current_time = time(NULL);
+						struct tm* current_time = localtime(&_current_time);
+						std::string last_updated = asctime(current_time);
+						last_updated.resize(last_updated.size() - 1);
+						package_information.last_updated = std::move(last_updated);
+						package_informations[_name] = package_information;
+					}
 				}
 			} else {
-				_build_success = true;
+				_success = true;
 				std::cout << "Commits matched for \033[32;1m" << _name << "\033[m, no need to build \033[33m[Skipping]\033[m" << std::endl;
 			}
 		}
@@ -69,7 +69,7 @@ void Package::build(std::unordered_map<std::string, PackageInformation>& package
 }
 
 void Package::post_build() {
-	if (_built && _build_success && !_post_build_command.empty())
+	if (_built && _success && !_post_build_command.empty())
 		Command::run(_name, _post_build_command, CommandType::PostBuild);
 }
 
@@ -84,20 +84,20 @@ std::unordered_map<std::string, Package> Package::from_configurations(
 	return packages;
 }
 
-void Package::_from_configurations(
-	const std::string& name, std::unordered_map<std::string, Package>& packages,
+Package* Package::_from_configurations(
+	const std::string& name,
+	std::unordered_map<std::string, Package>& packages,
 	std::unordered_map<std::string, PackageConfiguration>& package_configurations
 ) {
-	if (packages.find(name) == packages.end()) {
+	std::unordered_map<std::string, Package>::iterator package = packages.find(name);
+	if (package == packages.end()) {
 		PackageConfiguration& package_configuration = package_configurations.at(name);
 		std::vector<Package*> dependencies;
 
-		for (const std::string& dependency_name : package_configuration.dependencies) {
-			_from_configurations(dependency_name, packages, package_configurations);
-			dependencies.push_back(&packages.at(dependency_name));
-		}
+		for (const std::string& dependency_name : package_configuration.dependencies)
+			dependencies.push_back(_from_configurations(dependency_name, packages, package_configurations));
 
-		packages.insert({
+		return &packages.insert({
 			name,
 			Package(
 				name,
@@ -108,6 +108,7 @@ void Package::_from_configurations(
 				std::move(dependencies),
 				std::move(package_configuration.commit)
 			)
-		});
-	}
+		}).first->second;
+	} else
+		return &package->second;
 }

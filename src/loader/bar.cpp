@@ -24,7 +24,7 @@ void BarLoader::update_loader(size_t percentage) {
 		size_t filled_length = (percentage * BAR_LOADER_LENGTH) / 100;
 
 		for (size_t i = 0; i < filled_length; i++)
-			std::cout << "█";
+			std::cout << "●";
 
 		for (size_t i = filled_length; i < BAR_LOADER_LENGTH; i++)
 			std::cout << " ";

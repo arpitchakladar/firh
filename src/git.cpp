@@ -7,8 +7,6 @@
 #include "path.hpp"
 #include "loader/bar.hpp"
 
-#include <iostream>
-
 static int _fetch_progress(
 	const git_indexer_progress *stats,
 	void *bar_loader_payload
@@ -43,6 +41,7 @@ GitRepository::GitRepository(
 	if (_commit.empty()) {
 		git_oid oid_parent_commit;
 		git_reference_name_to_id(&oid_parent_commit, _git_repository, "HEAD");
+		_commit = std::string(GIT_OID_SHA1_HEXSIZE, '\0');
 		git_oid_nfmt(const_cast<char*>(_commit.c_str()), GIT_OID_SHA1_HEXSIZE, &oid_parent_commit);
 	} else {
 		git_oid oid_parent_commit;

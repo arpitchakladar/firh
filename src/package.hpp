@@ -32,9 +32,10 @@ private:
 	std::string _post_build_command;
 	std::vector<Package*> _dependencies;
 	bool _built;
-	bool _build_success;
-	static void _from_configurations(
-		const std::string& name, std::unordered_map<std::string, Package>& packages,
+	bool _success;
+	static Package* _from_configurations(
+		const std::string& name,
+		std::unordered_map<std::string, Package>& packages,
 		std::unordered_map<std::string, PackageConfiguration>& package_configurations
 	);
 };

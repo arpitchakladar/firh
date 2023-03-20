@@ -1,0 +1,20 @@
+firh: # if firh is compiled from source
+  url: https://github.com/arpitchakladar/firh
+  build: chmod +x ./scripts/build.sh && ./scripts/build.sh
+  post-build: mv ./build/firh /usr/local/bin/
+  dependency:
+    - libgit2
+
+libgit2: # if libgit2 is compiled from source
+  url: https://github.com/arpitchakladar/firh
+  build: chmod +x ./scripts/build.sh && ./scripts/build.sh
+  post-build: mv ./build/firh /usr/local/bin/
+
+i3kbar:
+  url: https://github.com/arpitchakladar/i3kbar
+  build: make config=release
+  post-build: mv ./build/a.out ~/.local/bin/i3kbar
+
+st:
+  url: https://git.suckless.org/st
+  build: make PREFIX=/usr/local install
