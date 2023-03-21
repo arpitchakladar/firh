@@ -9,7 +9,7 @@
 
 std::unordered_map<std::string, PackageConfiguration> PackageConfiguration::get() {
 	std::unordered_map<std::string, PackageConfiguration> package_configurations;
-	YAML::Node package_configurations_data = YAML::LoadFile(Path::package_configuration_file_path);
+	YAML::Node package_configurations_data = YAML::LoadFile(Path::package_configuration_file);
 
 	for (const YAML::detail::iterator_value& package_configuration : package_configurations_data)
 		package_configurations[package_configuration.first.as<std::string>()] = package_configuration.second.as<PackageConfiguration>();

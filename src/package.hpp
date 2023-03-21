@@ -19,6 +19,7 @@ public:
 		std::vector<Package*>&& dependencies,
 		std::string&& commit
 	);
+	void patch();
 	void build(std::unordered_map<std::string, PackageInformation>& package_informations);
 	void post_build();
 	static std::unordered_map<std::string, Package> from_configurations(

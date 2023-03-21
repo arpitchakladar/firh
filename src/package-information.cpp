@@ -10,7 +10,7 @@
 
 std::unordered_map<std::string, PackageInformation> PackageInformation::get() {
 	std::unordered_map<std::string, PackageInformation> package_informations;
-	YAML::Node package_informations_data = YAML::LoadFile(Path::package_information_file_path);
+	YAML::Node package_informations_data = YAML::LoadFile(Path::package_information_file);
 
 	for (const YAML::detail::iterator_value& package_information : package_informations_data)
 		package_informations.insert({ package_information.first.as<std::string>(), package_information.second.as<PackageInformation>() });
@@ -19,8 +19,9 @@ std::unordered_map<std::string, PackageInformation> PackageInformation::get() {
 }
 
 void PackageInformation::write(std::unordered_map<std::string, PackageInformation>&& package_informations) {
-	std::fstream package_informations_file = FileSystem::open_file(Path::package_information_file_path);
+	std::fstream package_informations_file = FileSystem::open_file(Path::package_information_file);
 	package_informations_file << YAML::Node(package_informations);
+	package_informations_file.close();
 }
 
 YAML::Node YAML::convert<PackageInformation>::encode(const PackageInformation& rhs) {

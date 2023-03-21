@@ -3,12 +3,15 @@
 #include <unordered_map>
 #include <ctime>
 #include <iostream>
+#include <fstream>
 
 #include "git.hpp"
 #include "package.hpp"
 #include "package-information.hpp"
 #include "package-configuration.hpp"
 #include "command.hpp"
+#include "path.hpp"
+#include "file-system.hpp"
 
 Package::Package(
 	const std::string& name,
@@ -27,6 +30,24 @@ Package::Package(
 		_built(false),
 		_success(false)
 {}
+
+void Package::patch() {
+	std::string patch_directory_path = Path::patches_directory + _name + "/";
+	if (FileSystem::is_directory(patch_directory_path)) {
+		std::vector<std::string> file_paths = FileSystem::list_directory(patch_directory_path);
+		for (const std::string& file_name : file_paths) {
+			std::fstream source_file = FileSystem::open_file(patch_directory_path + file_name);
+			std::fstream destination_file = FileSystem::open_empty_file(_git_repository.get_local_path() + "/" + file_name);
+			std::string content;
+			while (!source_file.eof()) {
+				getline(source_file, content);
+				destination_file << content << std::endl;
+			}
+			source_file.close();
+			destination_file.close();
+		}
+	}
+}
 
 void Package::build(std::unordered_map<std::string, PackageInformation>& package_informations) {
 	if (!_built) {

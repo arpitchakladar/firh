@@ -1,4 +1,5 @@
 #include <string>
+#include <iostream>
 
 #include "libgit2/git2.h"
 
@@ -7,7 +8,6 @@
 #include "path.hpp"
 #include "loader/bar.hpp"
 
-#include <iostream>
 static int _fetch_progress(
 	const git_indexer_progress *stats,
 	void *bar_loader_payload
