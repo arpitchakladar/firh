@@ -2,12 +2,11 @@
 
 #pragma once
 
-enum class CommandType {
-	Build,
-	PostBuild
-};
-
 class Command {
 public:
-	static bool run(const std::string& name, const std::string& command, CommandType command_type);
+	enum Type : uint8_t {
+		Build,
+		PostBuild
+	};
+	static bool run(const std::string& name, const std::string& command, Type command_type);
 };

@@ -21,7 +21,11 @@ void Path::initialize() {
 
 	FileSystem::create_directory(data_directory);
 
+#ifdef DEBUG
 	git_repository_cache_directory = "/tmp/firh/repositories/";
+#else
+	git_repository_cache_directory = "/usr/local/share/firh/repositories/";
+#endif
 	FileSystem::create_directory(git_repository_cache_directory);
 
 	build_log_cache_directory = "/tmp/firh/log/";

@@ -32,6 +32,7 @@ void Package::build(std::unordered_map<std::string, PackageInformation>& package
 	if (!_built) {
 		if (_build_command.empty())
 			_success = true;
+
 		else {
 			PackageInformation package_information;
 			std::unordered_map<std::string, PackageInformation>::iterator package_information_entry = package_informations.find(_name);
@@ -41,6 +42,8 @@ void Package::build(std::unordered_map<std::string, PackageInformation>& package
 			std::string current_commit = _git_repository.get_commit();
 
 			if (package_information.commit != current_commit) {
+				_success = true;
+
 				for (size_t i = 0; i < _dependencies.size() && _success; i++) {
 					Package* package = _dependencies[i];
 					package->build(package_informations);
@@ -49,11 +52,11 @@ void Package::build(std::unordered_map<std::string, PackageInformation>& package
 
 				if (_success) {
 					_built = true;
-					_success = Command::run(_name, _build_command, CommandType::Build);
+					_success = Command::run(_name, _build_command, Command::Build);
 					if (_success) {
 						package_information.commit = std::move(current_commit);
 						time_t _current_time = time(NULL);
-						struct tm* current_time = localtime(&_current_time);
+						tm* current_time = localtime(&_current_time);
 						std::string last_updated = asctime(current_time);
 						last_updated.resize(last_updated.size() - 1);
 						package_information.last_updated = std::move(last_updated);
@@ -62,15 +65,20 @@ void Package::build(std::unordered_map<std::string, PackageInformation>& package
 				}
 			} else {
 				_success = true;
-				std::cout << "Commits matched for \033[32;1m" << _name << "\033[m, no need to build \033[33m[Skipping]\033[m" << std::endl;
+				std::cout << "Commits matched for \033[32;1m" << _name << " \033[33m[Skipping]\033[m" << std::endl;
 			}
 		}
 	}
 }
 
 void Package::post_build() {
-	if (_built && _success && !_post_build_command.empty())
-		Command::run(_name, _post_build_command, CommandType::PostBuild);
+	if (!_post_build_command.empty()) {
+		if (_built && _success)
+			Command::run(_name, _post_build_command, Command::PostBuild);
+
+		else
+			std::cout << "Build skipped \033[32;1m" << _name << " \033[33m[Skipping]\033[m" << std::endl;
+	}
 }
 
 std::unordered_map<std::string, Package> Package::from_configurations(
