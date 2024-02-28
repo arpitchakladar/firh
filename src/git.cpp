@@ -20,19 +20,27 @@ static int _fetch_progress(
 GitRepository::GitRepository(
 	const std::string& name,
 	const std::string& remote_url,
-	std::string&& branch,
-	std::string&& commit
+	const std::string& branch,
+	const std::string& commit
 )
 	: _local_path(Path::configuration_directory + name + "/repository"),
-		_branch(std::move(branch)),
-		_commit(std::move(commit))
+		_branch(branch),
+		_commit(commit)
 {
 	bool reset_commit = true;
-	if (git_repository_open_ext(&_git_repository, (_local_path + "/.git").c_str(), GIT_REPOSITORY_OPEN_NO_SEARCH, NULL) == GIT_ENOTFOUND) {
+
+	// CLONING
+	int open_status = git_repository_open_ext(
+		&_git_repository,
+		(_local_path + "/.git").c_str(),
+		GIT_REPOSITORY_OPEN_NO_SEARCH,
+		NULL
+	);
+	if (open_status == GIT_ENOTFOUND) {
 		git_clone_options clone_options = GIT_CLONE_OPTIONS_INIT;
 
 		if (!_branch.empty())
-			clone_options.checkout_branch = branch.c_str();
+			clone_options.checkout_branch = _branch.c_str();
 
 		BarLoader loader("Cloning repository \033[32;1m" + name + "\033[m");
 		clone_options.fetch_opts.callbacks.payload = &loader;
@@ -47,6 +55,7 @@ GitRepository::GitRepository(
 		std::cout << "Found git repository for \033[32;1m" << name << " \033[33m[Skipping]\033[m" << std::endl;
 	}
 
+	// COMMITS
 	git_oid oid_parent_commit;
 
 	if (_commit.empty()) {

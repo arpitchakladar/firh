@@ -31,7 +31,6 @@ bool YAML::convert<PackageConfiguration>::decode(const YAML::Node& node, Package
 	if (!node.IsMap())
 		return false;
 
-	rhs.name = _get_optional_node_field<std::string>(node, "name");
 	rhs.git_repository_remote_url = node["url"].as<std::string>();
 	rhs.branch = _get_optional_node_field<std::string>(node, "branch");
 	rhs.dependencies = _get_optional_node_field<std::vector<std::string>>(node, "dependencies");

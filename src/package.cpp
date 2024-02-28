@@ -7,11 +7,12 @@
 
 #include "git.hpp"
 #include "package.hpp"
-#include "package/package-information.hpp"
 #include "package/package-configuration.hpp"
 #include "command.hpp"
 #include "path.hpp"
 #include "file-system.hpp"
+#include "loader/infinite.hpp"
+
 /*
 Package::Package(
 	const std::string& name,
@@ -27,13 +28,26 @@ Package::Package(
 		_success(false)
 {}
 */
-Package::Package(
-	PackageConfiguration&& package_configuration,
-	PackageInformation&& package_information
-)
+Package::Package(PackageConfiguration&& package_configuration)
 	: _package_configuration(std::move(package_configuration)),
-		_package_information(std::move(package_information))
+		_git_repository(
+			package_configuration.name,
+			package_configuration.git_repository_remote_url,
+			package_configuration.branch,
+			package_configuration.commit
+		)
 {}
+
+void Package::build() {
+	if (!_built) {
+		std::string build_script_path = Path::configuration_directory + _package_configuration.name + "/build.sh";
+		InfiniteLoader loader("Building \033[32;1m" + _package_configuration.name + "\033[m");
+		_success = Command::run(_package_configuration.name, build_script_path, "build.log");
+		loader.finish(_success);
+		_built = _success;
+	}
+}
+
 /*
 void Package::build(std::unordered_map<std::string, PackageInformation>& package_informations) {
 	if (!_built) {
@@ -78,26 +92,18 @@ void Package::build(std::unordered_map<std::string, PackageInformation>& package
 	}
 }
 */
-void Package::post_build() {
-	std::string post_build_script_path = Path::configuration_directory + _package_configuration.name + "/post-build.sh";
-	if (FileSystem::file_exists(post_build_script_path)) {
-		if (_built && _success)
-			Command::run(_package_configuration.name, post_build_script_path, Command::PostBuild);
-
-		else
-			std::cout << "Build skipped \033[32;1m" << _package_configuration.name << " \033[33m[Skipping]\033[m" << std::endl;
-	}
-}
 
 std::vector<Package> Package::load_packages() {
 	std::vector<std::string> package_directories = FileSystem::list_subdirectories(Path::configuration_directory);
-	std::vector<std::string> loaded;
+	std::vector<Package> packages;
+
 	for(const std::string& package_name : package_directories) {
 		std::string package_directory = Path::configuration_directory + package_name + "/";
 		PackageConfiguration package_configuration = YAML::LoadFile(package_directory + "config.yml")
 			.as<PackageConfiguration>();
-		if (package_configuration.name.empty())
-			package_configuration.name = package_name;
+		package_configuration.name = package_name;
+		packages.push_back(Package(std::move(package_configuration)));
 	}
-	return std::vector<Package>();
+
+	return packages;
 }

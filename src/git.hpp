@@ -9,8 +9,8 @@ public:
 	GitRepository(
 		const std::string& name,
 		const std::string& remote_url,
-		std::string&& branch,
-		std::string&& commit
+		const std::string& branch,
+		const std::string& commit
 	);
 	static void initialize();
 	const std::string& get_local_path() const { return _local_path; }

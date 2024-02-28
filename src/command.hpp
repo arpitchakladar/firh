@@ -5,9 +5,5 @@
 
 class Command {
 public:
-	enum Type : uint8_t {
-		Build,
-		PostBuild
-	};
-	static bool run(const std::string& name, const std::string& command, Type command_type);
+	static bool run(const std::string& name, const std::string& command, std::string log_file);
 };

@@ -3,36 +3,17 @@
 #include "command.hpp"
 #include "file-system.hpp"
 #include "path.hpp"
-#include "loader/infinite.hpp"
 
-bool Command::run(const std::string& name, const std::string& command, Command::Type command_type) {
+bool Command::run(const std::string& name, const std::string& command, std::string log_file) {
 	std::string build_log_directory_path = Path::build_log_directory + name;
 	std::string git_repository_directory = Path::configuration_directory + name + "/repository";
 	FileSystem::create_directory(build_log_directory_path);
 
-	std::string type;
-	std::string loader_message;
-
-	switch (command_type) {
-	case Command::Type::Build:
-		type = "build";
-		loader_message = "Building \033[32;1m" + name + "\033[m";
-		break;
-	
-	case Command::Type::PostBuild:
-		type = "post-build";
-		loader_message = "Running post-build for \033[32;1m" + name + "\033[m";
-	}
-
 	std::string final_command =
-		"cd " + git_repository_directory + name
+		"cd " + git_repository_directory
 		+ " && " + command
 		+ " > " + build_log_directory_path + "/"
-		+ type + ".log 2>&1";
+		+ log_file + " 2>&1";
 
-	InfiniteLoader loader(loader_message);
-	bool success = system(final_command.c_str()) == 0;
-	loader.finish(success);
-
-	return success;
+	return system(final_command.c_str()) == 0;
 }

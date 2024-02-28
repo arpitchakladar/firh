@@ -19,7 +19,10 @@ int main(int argc, char* argv[]) {
 
 	Path::initialize();
 	GitRepository::initialize();
-	Package::load_packages();
+	std::vector<Package> packages = Package::load_packages();
+	for (Package& package : packages) {
+		package.build();
+	}
 
 /*
 	std::cout << "\033[36;4mLoading configurations\033[m";

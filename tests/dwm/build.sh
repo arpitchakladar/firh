@@ -1,2 +1,0 @@
-cd chadwm
-make dwm
