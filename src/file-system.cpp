@@ -34,25 +34,12 @@ bool FileSystem::is_directory(const std::string& path) {
 	return (stat(path.c_str(), &info) == 0) && ((info.st_mode & S_IFDIR) != 0);
 }
 
-static void _list_directory(const std::string& path, std::vector<std::string>& contents, const std::string& prefix = "") {
-	DIR* directory = opendir((path + prefix).c_str());
-	struct dirent* dir;
-	if (directory) {
-		while ((dir = readdir(directory)) != NULL) {
-			if (dir->d_type == DT_REG) {
-				contents.push_back(prefix + dir->d_name);
-			} else if (std::string(dir->d_name) != "." && std::string(dir->d_name) != "..") {
-				_list_directory(path, contents, prefix + dir->d_name + "/");
-			}
-		}
-
-		closedir(directory);
-	}
-}
-
-std::vector<std::string> FileSystem::list_directory(const std::string& path) {
+std::vector<std::string> FileSystem::list_subdirectories(const std::string& path) {
+	const std::filesystem::path _path(path);
 	std::vector<std::string> contents;
-	_list_directory(path, contents);
+	for (const std::filesystem::directory_entry& dir_entry : std::filesystem::directory_iterator(_path))
+		if (dir_entry.is_directory())
+			contents.push_back(dir_entry.path().filename());
 	return contents;
 }
 
@@ -66,14 +53,16 @@ std::fstream FileSystem::open_file(const std::string& path) {
 	return file_stream;
 }
 
+bool FileSystem::file_exists(const std::string& path) {
+	return std::filesystem::exists(path);
+}
+
 std::fstream FileSystem::open_empty_file(const std::string& path) {
 	std::fstream file_stream;
 	file_stream.open(path, std::ios::in | std::ios::out | std::ios::trunc);
 
 	return file_stream;
 }
-
-
 
 void FileSystem::create_file(const std::string& path) {
 	open_file(path).close();

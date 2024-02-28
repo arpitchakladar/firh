@@ -6,8 +6,9 @@
 #include "loader/infinite.hpp"
 
 bool Command::run(const std::string& name, const std::string& command, Command::Type command_type) {
-	std::string absolute_log_directory_path = Path::build_log_cache_directory + name;
-	FileSystem::create_directory(absolute_log_directory_path);
+	std::string build_log_directory_path = Path::build_log_directory + name;
+	std::string git_repository_directory = Path::configuration_directory + name + "/repository";
+	FileSystem::create_directory(build_log_directory_path);
 
 	std::string type;
 	std::string loader_message;
@@ -24,9 +25,9 @@ bool Command::run(const std::string& name, const std::string& command, Command::
 	}
 
 	std::string final_command =
-		"cd " + Path::git_repository_cache_directory + name
+		"cd " + git_repository_directory + name
 		+ " && " + command
-		+ " > " + absolute_log_directory_path + "/"
+		+ " > " + build_log_directory_path + "/"
 		+ type + ".log 2>&1";
 
 	InfiniteLoader loader(loader_message);

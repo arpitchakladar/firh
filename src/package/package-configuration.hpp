@@ -7,13 +7,11 @@
 #pragma once
 
 struct PackageConfiguration {
+	std::string name;
 	std::string git_repository_remote_url;
 	std::string branch;
-	std::string build_command;
-	std::string post_build_command;
 	std::vector<std::string> dependencies;
 	std::string commit;
-	static std::unordered_map<std::string, PackageConfiguration> get();
 };
 
 template<>

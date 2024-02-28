@@ -3,40 +3,29 @@
 #include <unordered_map>
 
 #include "git.hpp"
-#include "package-configuration.hpp"
-#include "package-information.hpp"
+#include "package/package-configuration.hpp"
+#include "package/package-information.hpp"
 
 #pragma once
 
 class Package {
 public:
 	Package(
-		const std::string& name,
-		const std::string& git_repository_remote_url,
-		std::string&& branch,
-		std::string&& build_command,
-		std::string&& post_build_command,
-		std::vector<Package*>&& dependencies,
-		std::string&& commit
+		PackageConfiguration&& package_configuration,
+		PackageInformation&& package_information
 	);
-	void patch();
-	void build(std::unordered_map<std::string, PackageInformation>& package_informations);
+/*
+	void build();
+
+*/
 	void post_build();
-	static std::unordered_map<std::string, Package> from_configurations(
-		std::unordered_map<std::string, PackageConfiguration>& package_configurations
-	);
+	static std::vector<Package> load_packages();
 
 private:
-	std::string _name;
-	GitRepository _git_repository;
-	std::string _build_command;
-	std::string _post_build_command;
+	// GitRepository _git_repository;
 	std::vector<Package*> _dependencies;
+	PackageConfiguration _package_configuration;
+	PackageInformation _package_information;
 	bool _built;
 	bool _success;
-	static Package* _from_configurations(
-		const std::string& name,
-		std::unordered_map<std::string, Package>& packages,
-		std::unordered_map<std::string, PackageConfiguration>& package_configurations
-	);
 };

@@ -1,7 +1,0 @@
-dwm:
-  url: https://git.suckless.org/dwm
-  build: make PREFIX=/usr/local install
-
-i3kbar:
-  url: https://github.com/arpitchakladar/i3kbar
-  build: make config=release

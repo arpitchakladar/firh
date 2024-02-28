@@ -1,1 +1,3 @@
 build
+tests/.package-data.yml
+tests/**/repository

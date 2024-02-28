@@ -23,7 +23,7 @@ GitRepository::GitRepository(
 	std::string&& branch,
 	std::string&& commit
 )
-	: _local_path(Path::git_repository_cache_directory + name),
+	: _local_path(Path::configuration_directory + name + "/repository"),
 		_branch(std::move(branch)),
 		_commit(std::move(commit))
 {
