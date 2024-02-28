@@ -9,13 +9,14 @@
 
 class Package {
 public:
-	Package(PackageConfiguration&& package_configuration);
+	Package(PackageConfiguration&& configuration);
 	void build();
 	static std::vector<Package> load_packages();
+	static void build_packages(std::vector<Package>& packages);
 
 private:
 	GitRepository _git_repository;
-	PackageConfiguration _package_configuration;
+	PackageConfiguration _configuration;
 	bool _built;
 	bool _success;
 };

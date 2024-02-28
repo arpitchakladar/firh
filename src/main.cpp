@@ -8,6 +8,7 @@
 #include "package.hpp"
 #include "path.hpp"
 #include "loader/infinite.hpp"
+#include "logger.hpp"
 
 int main(int argc, char* argv[]) {
 #ifndef DEBUG
@@ -19,13 +20,17 @@ int main(int argc, char* argv[]) {
 
 	Path::initialize();
 	GitRepository::initialize();
+
+	Logger::job("Loading packages.");
 	std::vector<Package> packages = Package::load_packages();
-	for (Package& package : packages) {
-		package.build();
-	}
+
+	Logger::separator();
+
+	Logger::job("Building packages.");
+	Package::build_packages(packages);
 
 /*
-	std::cout << "\033[36;4mLoading configurations\033[m";
+	std::cout << "\033[36;4m\033[m";
 	std::unordered_map<std::string, PackageConfiguration> package_configurations = PackageConfiguration::get();
 	std::unordered_map<std::string, PackageInformation> package_informations = PackageInformation::get();
 	std::cout << " \033[34m[Finished]\033[m" << std::endl << "\033[36;4mCloning repositories\033[m" << std::endl;
