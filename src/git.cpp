@@ -17,16 +17,20 @@ static int _fetch_progress(
 	return 0;
 }
 
-GitRepository::GitRepository(
+Git::Git(
 	const std::string& name,
-	const std::string& remote_url,
+	const std::string& url,
 	const std::string& branch,
 	const std::string& commit
 )
 	: _local_path(Path::configuration_directory + name + "/repository"),
 		_branch(branch),
-		_commit(commit)
-{
+		_commit(commit),
+		_url(url),
+		_name(name)
+{}
+
+void Git::clone() {
 	bool reset_commit = true;
 
 	// CLONING
@@ -42,17 +46,17 @@ GitRepository::GitRepository(
 		if (!_branch.empty())
 			clone_options.checkout_branch = _branch.c_str();
 
-		BarLoader loader("Cloning repository \033[32;1m" + name + "\033[m");
+		BarLoader loader("Cloning repository \033[32;1m" + _name + "\033[m");
 		clone_options.fetch_opts.callbacks.payload = &loader;
 		clone_options.fetch_opts.callbacks.transfer_progress = _fetch_progress;
-		git_clone(&_git_repository, remote_url.c_str(), _local_path.c_str(), &clone_options);
+		git_clone(&_git_repository, _url.c_str(), _local_path.c_str(), &clone_options);
 		loader.finish(true);
 		reset_commit = false;
 	} else {
 		git_remote* remote;
 		git_remote_lookup(&remote, _git_repository, "origin");
 		git_remote_fetch(remote, NULL, NULL, NULL);
-		std::cout << "Found git repository for \033[32;1m" << name << " \033[33m[Skipping]\033[m" << std::endl;
+		std::cout << "Found git repository for \033[32;1m" << _name << " \033[33m[Skipping]\033[m" << std::endl;
 	}
 
 	// COMMITS
@@ -74,8 +78,9 @@ GitRepository::GitRepository(
 		checkout_options.checkout_strategy = GIT_CHECKOUT_FORCE;
 		git_reset(_git_repository, static_cast<git_object*>(current_commit_object), GIT_RESET_HARD, &checkout_options);
 	}
+
 }
 
-void GitRepository::initialize() {
+void Git::initialize() {
 	git_libgit2_init();
 }

@@ -3,9 +3,10 @@
 #include <unordered_map>
 #include <iostream>
 #include <unistd.h>
+#include <stdexcept>
 
 #include "git.hpp"
-#include "package.hpp"
+#include "package/package-manager.hpp"
 #include "path.hpp"
 #include "loader/infinite.hpp"
 #include "logger.hpp"
@@ -13,21 +14,29 @@
 int main(int argc, char* argv[]) {
 #ifndef DEBUG
 	if (geteuid() != 0) {
-		std::cout << "\033[31;1mYou need to run firh with root priviledges\033[m" << std::endl;
+		Logger::error("You need to run firh with root priviledges");
 		return EXIT_FAILURE;
 	}
 #endif
 
 	Path::initialize();
-	GitRepository::initialize();
+	Git::initialize();
+
+	PackageManager package_manager;
 
 	Logger::job("Loading packages.");
-	std::vector<Package> packages = Package::load_packages();
+	package_manager.load_packages();
 
+	/*
 	Logger::separator();
 
 	Logger::job("Building packages.");
-	Package::build_packages(packages);
+	try {
+		Package::build_packages(packages);
+	} catch (const std::exception& exception) {
+		Logger::separator();
+		Logger::error(exception.what());
+	}*/
 
 /*
 	std::cout << "\033[36;4m\033[m";

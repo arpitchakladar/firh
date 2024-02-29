@@ -1,6 +1,5 @@
 #include <string>
 #include <vector>
-#include <unordered_map>
 
 #include "yaml-cpp/yaml.h"
 
@@ -8,7 +7,7 @@
 
 struct PackageConfiguration {
 	std::string name;
-	std::string git_repository_remote_url;
+	std::string url;
 	std::string branch;
 	std::vector<std::string> dependencies;
 	std::string commit;
