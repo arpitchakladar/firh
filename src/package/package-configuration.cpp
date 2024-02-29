@@ -6,9 +6,14 @@
 #include "package/package-configuration.hpp"
 #include "path.hpp"
 
+template<>
+struct YAML::convert<PackageConfiguration> {
+	static YAML::Node encode(const PackageConfiguration& rhs);
+	static bool decode(const YAML::Node& node, PackageConfiguration& rhs);
+};
+
 YAML::Node YAML::convert<PackageConfiguration>::encode(const PackageConfiguration& rhs) {
 	YAML::Node node;
-	node["name"] = rhs.name;
 	node["url"] = rhs.url;
 	node["branch"] = rhs.branch;
 
@@ -36,4 +41,8 @@ bool YAML::convert<PackageConfiguration>::decode(const YAML::Node& node, Package
 	rhs.commit = _get_optional_node_field<std::string>(node, "commit");
 
 	return true;
+}
+
+PackageConfiguration PackageConfiguration::from_file(const std::string& path) {
+	return YAML::LoadFile(path).as<PackageConfiguration>();
 }

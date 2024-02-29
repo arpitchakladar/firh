@@ -8,11 +8,11 @@
 
 class Package {
 public:
-	Package(PackageConfiguration&& configuration);
-	/*
-	void build();
-	static std::vector<Package> load_packages();
-	static void build_packages(std::vector<Package>& packages);*/
+	Package(
+		const std::string& name,
+		std::vector<Package*>&& dependencies,
+		PackageConfiguration&& configuration
+	);
 
 private:
 	Git _git;

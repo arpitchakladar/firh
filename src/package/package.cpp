@@ -14,16 +14,21 @@
 #include "file-system.hpp"
 #include "loader/infinite.hpp"
 
-Package::Package(PackageConfiguration&& configuration)
+Package::Package(
+	const std::string& name,
+	std::vector<Package*>&& dependencies,
+	PackageConfiguration&& configuration
+)
 	: _git(
-			configuration.name,
+			name,
 			configuration.url,
 			configuration.branch,
 			configuration.commit
 		),
+		_name(std::move(name)),
 		_built(false),
 		_success(false),
-		_name(configuration.name)
+		_dependencies(std::move(dependencies))
 {}
 /*
 void Package::build() {
