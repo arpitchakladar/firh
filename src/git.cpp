@@ -6,13 +6,13 @@
 #include "git.hpp"
 #include "file-system.hpp"
 #include "path.hpp"
-#include "loader/bar.hpp"
+#include "loader/progress-loader.hpp"
 
 static int _fetch_progress(
 	const git_indexer_progress *stats,
 	void *bar_loader_payload
 ) {
-	BarLoader& loader = *((BarLoader*) bar_loader_payload);
+	ProgressLoader& loader = *((ProgressLoader*) bar_loader_payload);
 	loader.update_loader((stats->indexed_objects * 100) / stats->total_objects);
 	return 0;
 }
@@ -46,7 +46,7 @@ void Git::clone() {
 		if (!_branch.empty())
 			clone_options.checkout_branch = _branch.c_str();
 
-		BarLoader loader("Cloning repository \033[32;1m" + _name + "\033[m");
+		ProgressLoader loader("Cloning repository \033[32;1m" + _name + "\033[m");
 		clone_options.fetch_opts.callbacks.payload = &loader;
 		clone_options.fetch_opts.callbacks.transfer_progress = _fetch_progress;
 		git_clone(&_git_repository, _url.c_str(), _local_path.c_str(), &clone_options);
@@ -78,7 +78,6 @@ void Git::clone() {
 		checkout_options.checkout_strategy = GIT_CHECKOUT_FORCE;
 		git_reset(_git_repository, static_cast<git_object*>(current_commit_object), GIT_RESET_HARD, &checkout_options);
 	}
-
 }
 
 void Git::initialize() {

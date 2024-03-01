@@ -1,12 +1,12 @@
 #include <iostream>
 #include <string>
 
-#include "loader/bar.hpp"
-#include "loader/utils.hpp"
+#include "loader/progress-loader.hpp"
+#include "loader/_utils.hpp"
 
 #define BAR_LOADER_LENGTH 20
 
-BarLoader::BarLoader(const std::string& message)
+ProgressLoader::ProgressLoader(const std::string& message)
 	: _message(message),
 		_previous_percentage(0)
 {
@@ -18,7 +18,7 @@ BarLoader::BarLoader(const std::string& message)
 	std::cout << "]\r";
 }
 
-void BarLoader::update_loader(size_t percentage) {
+void ProgressLoader::update_loader(size_t percentage) {
 	if (_previous_percentage < percentage) {
 		std::cout << _message << " \033[33m[";
 		size_t filled_length = (percentage * BAR_LOADER_LENGTH) / 100;
@@ -35,7 +35,7 @@ void BarLoader::update_loader(size_t percentage) {
 	}
 }
 
-void BarLoader::finish(bool success) {
+void ProgressLoader::finish(bool success) {
 	std::cout << _message << " ";
 	_print_loader_status(success, BAR_LOADER_LENGTH + 9);
 }

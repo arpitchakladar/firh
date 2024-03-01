@@ -22,6 +22,21 @@ void PackageManager::initialize_packages() {
 	}
 }
 
+void PackageManager::build_packages() {
+	for (std::pair<std::string, Package> package : _packages) {
+		bool build = true;
+		for (Package* dependency : package.second.dependencies()) {
+			dependency->build();
+			build = dependency->built();
+		}
+		if (build) {
+			package.second.build();
+		} else {
+			Logger::error("Failed to build \"" + package.first + "\" due to faulty dependency.");
+		}
+	}
+}
+
 Package& PackageManager::_load_package(const std::string& name) {
 	std::unordered_map<std::string, Package>::iterator package = _packages.find(name);
 
@@ -59,17 +74,3 @@ Package& PackageManager::_load_package(const std::string& name) {
 	}
 }
 
-void PackageManager::build_packages() {
-	for (std::pair<std::string, Package> package : _packages) {
-		bool build = true;
-		for (Package* dependency : package.second.dependencies()) {
-			dependency->build();
-			build = dependency->built();
-		}
-		if (build) {
-			package.second.build();
-		} else {
-			Logger::error("Failed to build \"" + package.first + "\" due to faulty dependency.");
-		}
-	}
-}

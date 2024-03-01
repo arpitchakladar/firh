@@ -2,9 +2,9 @@
 
 #pragma once
 
-class BarLoader {
+class ProgressLoader {
 public:
-	BarLoader(const std::string& message);
+	ProgressLoader(const std::string& message);
 	void update_loader(size_t percentage);
 	void finish(bool success);
 

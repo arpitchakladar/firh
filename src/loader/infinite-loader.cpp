@@ -3,8 +3,8 @@
 #include <iostream>
 #include <unistd.h>
 
-#include "loader/infinite.hpp"
-#include "loader/utils.hpp"
+#include "loader/infinite-loader.hpp"
+#include "loader/_utils.hpp"
 
 #define INFINITE_LOADER_LENGTH 8
 

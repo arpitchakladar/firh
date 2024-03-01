@@ -12,7 +12,7 @@
 #include "command.hpp"
 #include "path.hpp"
 #include "file-system.hpp"
-#include "loader/infinite.hpp"
+#include "loader/infinite-loader.hpp"
 
 Package::Package(
 	const std::string& name,

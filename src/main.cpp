@@ -8,7 +8,6 @@
 #include "git.hpp"
 #include "package/package-manager.hpp"
 #include "path.hpp"
-#include "loader/infinite.hpp"
 #include "logger.hpp"
 
 int main(int argc, char* argv[]) {
