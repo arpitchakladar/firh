@@ -43,11 +43,7 @@ Package& PackageManager::_load_package(const std::string& name) {
 	if (package == _packages.end()) {
 		std::string directory = Path::configuration_directory + name + "/";
 		PackageConfiguration configuration;
-		try {
-			configuration = PackageConfiguration::from_file(directory + "config.yml");
-		} catch (const std::exception& exception) {
-			throw std::runtime_error("Configuration for package \"" + name + "\" not found.");
-		}
+		configuration = PackageConfiguration::from_file(directory + "config.yml");
 
 		std::vector<Package*> dependencies;
 
