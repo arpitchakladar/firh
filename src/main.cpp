@@ -28,39 +28,11 @@ int main(int argc, char* argv[]) {
 		Logger::job("Loading packages.");
 		package_manager.load_packages();
 		package_manager.initialize_packages();
+		Logger::job("Building packages.");
+		package_manager.build_packages();
 	} catch (const std::exception& exception) {
 		Logger::error(exception.what());
 	}
 
-	/*
-	Logger::separator();
-
-	Logger::job("Building packages.");
-	try {
-		Package::build_packages(packages);
-	} catch (const std::exception& exception) {
-		Logger::separator();
-		Logger::error(exception.what());
-	}*/
-
-/*
-	std::cout << "\033[36;4m\033[m";
-	std::unordered_map<std::string, PackageConfiguration> package_configurations = PackageConfiguration::get();
-	std::unordered_map<std::string, PackageInformation> package_informations = PackageInformation::get();
-	std::cout << " \033[34m[Finished]\033[m" << std::endl << "\033[36;4mCloning repositories\033[m" << std::endl;
-	std::unordered_map<std::string, Package> packages = Package::from_configurations(package_configurations);
-
-	std::cout << "\033[36;4mBuilding\033[m" << std::endl;
-	for (std::pair<const std::string, Package>& package : packages)
-		package.second.build(package_informations);
-
-	std::cout << "\033[36;4mRunning post build\033[m" << std::endl;
-	for (std::pair<const std::string, Package>& package : packages)
-		package.second.post_build();
-
-	std::cout << "\033[36;4mWriting updates\033[m" ;
-	PackageInformation::write(std::move(package_informations));
-	std::cout << " \033[34m[Finished]\033[m" << std::endl;
-*/
 	return EXIT_SUCCESS;
 }

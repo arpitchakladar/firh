@@ -15,11 +15,13 @@ public:
 	);
 	void initialize();
 	void build();
+	inline const std::string& name() { return _name; }
+	inline std::vector<Package*> dependencies() { return _dependencies; }
+	inline bool built() { return _built; }
 
 private:
 	Git _git;
 	std::string _name;
 	std::vector<Package*> _dependencies;
 	bool _built;
-	bool _success;
 };

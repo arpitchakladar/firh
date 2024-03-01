@@ -1,4 +1,3 @@
 url: https://github.com/siduck/chadwm
 dependencies:
   - st
-  - libgit2
