@@ -44,5 +44,9 @@ bool YAML::convert<PackageConfiguration>::decode(const YAML::Node& node, Package
 }
 
 PackageConfiguration PackageConfiguration::from_file(const std::string& path) {
-	return YAML::LoadFile(path).as<PackageConfiguration>();
+	try {
+		return YAML::LoadFile(path).as<PackageConfiguration>();
+	} catch (const YAML::BadFile& bad_file_exception) {
+		throw std::runtime_error("Package configuration not found.");
+	}
 }

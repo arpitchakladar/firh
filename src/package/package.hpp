@@ -13,6 +13,8 @@ public:
 		std::vector<Package*>&& dependencies,
 		PackageConfiguration&& configuration
 	);
+	void initialize();
+	void build();
 
 private:
 	Git _git;

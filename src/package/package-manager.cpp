@@ -1,4 +1,5 @@
 #include <utility>
+#include <stdexcept>
 
 #include "package/package.hpp"
 #include "package/package-configuration.hpp"
@@ -14,17 +15,32 @@ void PackageManager::load_packages() {
 	}
 }
 
+void PackageManager::initialize_packages() {
+	for (std::pair<std::string, Package> package : _packages) {
+		package.second.initialize();
+	}
+}
+
 Package& PackageManager::_load_package(const std::string& name) {
 	std::unordered_map<std::string, Package>::iterator package = _packages.find(name);
 
 	if (package == _packages.end()) {
 		std::string directory = Path::configuration_directory + name + "/";
-		PackageConfiguration configuration = PackageConfiguration::from_file(directory + "config.yml");
+		PackageConfiguration configuration;
+		try {
+			configuration = PackageConfiguration::from_file(directory + "config.yml");
+		} catch (const std::exception& exception) {
+			throw std::runtime_error("Configuration for package \"" + name + "\" not found.");
+		}
 
 		std::vector<Package*> dependencies;
 
 		for (const std::string& dependency_name : configuration.dependencies) {
-			dependencies.push_back(&_load_package(dependency_name));
+			try {
+				dependencies.push_back(&_load_package(dependency_name));
+			} catch (const std::exception& exception) {
+				throw std::runtime_error("Failed to resolve dependency \"" + dependency_name + "\" for package \"" + name + "\".");
+			}
 		}
 
 		Package& package = _packages.insert({
@@ -40,4 +56,8 @@ Package& PackageManager::_load_package(const std::string& name) {
 	} else {
 		return package->second;
 	}
+}
+
+void PackageManager::build_packages() {
+	
 }
