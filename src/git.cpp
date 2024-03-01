@@ -49,6 +49,7 @@ void Git::clone() {
 		ProgressLoader loader("Cloning repository \033[32;1m" + _name + "\033[m");
 		clone_options.fetch_opts.callbacks.payload = &loader;
 		clone_options.fetch_opts.callbacks.transfer_progress = _fetch_progress;
+		clone_options.fetch_opts.depth = 1;
 		git_clone(&_git_repository, _url.c_str(), _local_path.c_str(), &clone_options);
 		loader.finish(true);
 		reset_commit = false;
