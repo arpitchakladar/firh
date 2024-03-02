@@ -5,6 +5,7 @@
 
 #include "loader/infinite-loader.hpp"
 #include "loader/_utils.hpp"
+#include "logger.hpp"
 
 #define INFINITE_LOADER_LENGTH 8
 
@@ -36,13 +37,12 @@ void InfiniteLoader::_show_loader() {
 		std::cout << _message << " \033[33m[";
 
 		for (size_t j = 0; j < INFINITE_LOADER_LENGTH; j++)
-			std::cout << (j == pos ? "●" : " ");
+			std::cout << (j == pos ? "-" : " ");
 
 		std::cout << "]\033[m\r";
 		std::cout.flush();
 		usleep(100000);
 	}
 
-	std::cout << _message << " ";
-	_print_loader_status(_success, INFINITE_LOADER_LENGTH + 3);
+	_LoaderUtils::finish(_message.size() + INFINITE_LOADER_LENGTH, _message, _success);
 }

@@ -27,6 +27,7 @@ int main(int argc, char* argv[]) {
 		Logger::job("Loading packages.");
 		package_manager.load_packages();
 		package_manager.initialize_packages();
+		Logger::separator();
 		Logger::job("Building packages.");
 		package_manager.build_packages();
 	} catch (const std::exception& exception) {

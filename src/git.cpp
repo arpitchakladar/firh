@@ -1,5 +1,4 @@
 #include <string>
-#include <iostream>
 
 #include "libgit2/git2.h"
 
@@ -7,6 +6,7 @@
 #include "file-system.hpp"
 #include "path.hpp"
 #include "loader/progress-loader.hpp"
+#include "logger.hpp"
 
 static int _fetch_progress(
 	const git_indexer_progress *stats,
@@ -55,9 +55,11 @@ void Git::clone() {
 		reset_commit = false;
 	} else {
 		git_remote* remote;
+		git_fetch_options opts = GIT_FETCH_OPTIONS_INIT;
+		opts.depth = 1;
 		git_remote_lookup(&remote, _git_repository, "origin");
-		git_remote_fetch(remote, NULL, NULL, NULL);
-		std::cout << "Found git repository for \033[32;1m" << _name << " \033[33m[Skipping]\033[m" << std::endl;
+		git_remote_fetch(remote, NULL, &opts, NULL);
+		Logger::skipping("Found git repository for \033[32;1m" + _name + "\033[m");
 	}
 
 	// COMMITS
