@@ -34,5 +34,7 @@ int main(int argc, char* argv[]) {
 		Logger::error(exception.what());
 	}
 
+	Git::clear();
+
 	return EXIT_SUCCESS;
 }

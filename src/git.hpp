@@ -1,6 +1,6 @@
 #include <string>
 
-#include "libgit2/git2.h"
+#include "git2.h"
 
 #pragma once
 
@@ -13,6 +13,7 @@ public:
 		const std::string& commit
 	);
 	static void initialize();
+	static void clear();
 	void clone();
 	inline const std::string& get_local_path() const { return _local_path; }
 	inline const std::string& get_branch() const { return _branch; }

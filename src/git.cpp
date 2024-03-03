@@ -1,6 +1,6 @@
 #include <string>
 
-#include "libgit2/git2.h"
+#include "git2.h"
 
 #include "git.hpp"
 #include "file-system.hpp"
@@ -85,4 +85,8 @@ void Git::clone() {
 
 void Git::initialize() {
 	git_libgit2_init();
+}
+
+void Git::clear() {
+	git_libgit2_shutdown();
 }
